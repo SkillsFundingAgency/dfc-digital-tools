@@ -44,12 +44,12 @@ namespace DFC.Digital.Tools.Function.EmailNotification
                     {
                         if (exception.Message.Contains("429"))
                         {
-                            applicationLogger.ErrorJustLogIt("Exception containing a status code of 429 whilst sending email notification", exception);
+                            applicationLogger.Error("Exception containing a status code of 429 whilst sending email notification", exception);
                             await semaphoreFlagDetailsRepository.UpdateSemaphoreFlagDetailsAsync();
                             break;
                         }
 
-                        applicationLogger.ErrorJustLogIt("Exception whilst sending email notification", exception);
+                        applicationLogger.Error("Exception whilst sending email notification", exception);
                     }
                 }
 

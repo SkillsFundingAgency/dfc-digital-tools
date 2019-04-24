@@ -29,7 +29,7 @@ namespace DFC.Digital.Tools.Service.GovUkNotify
             }
             catch (NotifyClientException ex)
             {
-                applicationLogger.ErrorJustLogIt("Failed to send VOC email", ex);
+                applicationLogger.Error("Failed to send VOC email", ex);
                 return false;
             }
         }
