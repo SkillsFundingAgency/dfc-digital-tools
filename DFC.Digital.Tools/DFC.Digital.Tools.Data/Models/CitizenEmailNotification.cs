@@ -3,5 +3,7 @@
     public class CitizenEmailNotification : CitizenNotification
     {
         public string EmailAddress { get; set; }
+
+        public GovUkNotifyPersonalisation EmailPersonalisation { get; set; }
     }
 }
