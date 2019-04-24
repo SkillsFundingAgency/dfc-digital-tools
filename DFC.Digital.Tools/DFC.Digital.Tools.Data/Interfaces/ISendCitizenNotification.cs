@@ -3,6 +3,6 @@
     public interface ISendCitizenNotification<in T>
         where T : CitizenNotification
     {
-        bool SendCitizenNotification(T notification);
+        bool SendCitizenNotification(T citizenNotification);
     }
 }

@@ -5,5 +5,7 @@
         public string EmailAddress { get; set; }
 
         public GovUkNotifyPersonalisation EmailPersonalisation { get; set; }
+
+        public bool NotProcessed { get; set; }
     }
 }

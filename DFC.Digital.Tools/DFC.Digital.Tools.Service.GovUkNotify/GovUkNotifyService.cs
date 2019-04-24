@@ -1,4 +1,5 @@
-﻿using DFC.Digital.Tools.Data.Interfaces;
+﻿using DFC.Digital.Tools.Core;
+using DFC.Digital.Tools.Data.Interfaces;
 using DFC.Digital.Tools.Data.Models;
 using Notify.Exceptions;
 using System.Collections.Generic;
@@ -10,18 +11,20 @@ namespace DFC.Digital.Tools.Service.GovUkNotify
     {
         private readonly IApplicationLogger applicationLogger;
         private readonly IGovUkNotifyClientProxy clientProxy;
+        private readonly IConfigurationProvider configuration;
 
-        public GovUkNotifyService(IApplicationLogger applicationLogger, IGovUkNotifyClientProxy clientProxy)
+        public GovUkNotifyService(IApplicationLogger applicationLogger, IGovUkNotifyClientProxy clientProxy, IConfigurationProvider configuration)
         {
             this.applicationLogger = applicationLogger;
             this.clientProxy = clientProxy;
+            this.configuration = configuration;
         }
 
         public bool SendCitizenNotification(CitizenEmailNotification notification)
         {
             try
             {
-                var response = clientProxy.SendEmail("apikey", notification.EmailAddress, "templateId", this.Convert(notification.EmailPersonalisation));
+                var response = clientProxy.SendEmail(configuration.GetConfig<string>(Constants.GovUkNotifyApiKey), notification.EmailAddress, configuration.GetConfig<string>(Constants.GovUkNotifyTemplateId), this.Convert(notification.EmailPersonalisation));
                 return !string.IsNullOrEmpty(response?.id);
             }
             catch (NotifyClientException ex)
@@ -31,19 +34,19 @@ namespace DFC.Digital.Tools.Service.GovUkNotify
             }
         }
 
-        public Dictionary<string, dynamic> Convert(GovUkNotifyPersonalisation vocSurveyPersonalisation)
+        public Dictionary<string, dynamic> Convert(GovUkNotifyPersonalisation govUkNotifyPersonalisation)
         {
-            if (vocSurveyPersonalisation?.Personalisation != null)
+            if (govUkNotifyPersonalisation?.Personalisation != null)
             {
-                foreach (var item in vocSurveyPersonalisation?.Personalisation?.ToArray())
+                foreach (var item in govUkNotifyPersonalisation?.Personalisation?.ToArray())
                 {
-                    if (string.IsNullOrEmpty(item.Value) && vocSurveyPersonalisation != null)
+                    if (string.IsNullOrEmpty(item.Value) && govUkNotifyPersonalisation != null)
                     {
-                        vocSurveyPersonalisation.Personalisation[item.Key] = "uknown";
+                        govUkNotifyPersonalisation.Personalisation[item.Key] = "uknown";
                     }
                 }
 
-                return vocSurveyPersonalisation?.Personalisation
+                return govUkNotifyPersonalisation?.Personalisation
                     .ToDictionary<KeyValuePair<string, string>, string, dynamic>(
                         vocObj => vocObj.Key,
                         vocObj => vocObj.Value);
