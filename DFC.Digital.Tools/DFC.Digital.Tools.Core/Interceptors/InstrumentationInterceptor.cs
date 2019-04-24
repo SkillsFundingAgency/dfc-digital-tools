@@ -8,7 +8,8 @@ namespace DFC.Digital.Tools.Core
 {
     public class InstrumentationInterceptor : IInterceptor
     {
-        private IApplicationLogger loggingService;
+        public const string Name = "Instrumentation";
+        private readonly IApplicationLogger loggingService;
 
         public InstrumentationInterceptor(IApplicationLogger logService)
         {
