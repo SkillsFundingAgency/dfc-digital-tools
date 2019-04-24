@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28721.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DFC.Digital.Tools.Data", "DFC.Digital.Tools.Data\DFC.Digital.Tools.Data.csproj", "{25760082-EB23-4748-AFD6-B4D5CE50FDC4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataStructure", "DataStructure", "{4650D5ED-CE79-4D50-8D2F-83A80FDC4DF9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repositories", "Repositories", "{4F0266E2-6100-4B50-BF9C-98094359A811}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{368437FC-0AEC-4E45-8978-8687CFB61FA1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functions", "Functions", "{1B9E560E-91D7-4311-B216-31CDCACB2BFF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{73B84510-86EE-403C-A74B-8946A05780F9}"
+	ProjectSection(SolutionItems) = preProject
+		DFC.Digital.CodeAnalysis.ruleset = DFC.Digital.CodeAnalysis.ruleset
+		stylecop.json = stylecop.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{D498D0D7-485A-45D2-8F9B-822CAA10C894}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B5460C51-1323-4448-BEF9-EBB5DB9FC192}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit", "Unit", "{ABA7B9B7-CB6E-4FCC-93CA-826B0434FED1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functions", "Functions", "{38D84516-EB72-4479-95CD-3539CF66C06E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AzureFuncs", "AzureFuncs", "{5237DF78-9698-4569-B93F-AF3CB016D4B5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{25760082-EB23-4748-AFD6-B4D5CE50FDC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25760082-EB23-4748-AFD6-B4D5CE50FDC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25760082-EB23-4748-AFD6-B4D5CE50FDC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25760082-EB23-4748-AFD6-B4D5CE50FDC4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{25760082-EB23-4748-AFD6-B4D5CE50FDC4} = {4650D5ED-CE79-4D50-8D2F-83A80FDC4DF9}
+		{ABA7B9B7-CB6E-4FCC-93CA-826B0434FED1} = {B5460C51-1323-4448-BEF9-EBB5DB9FC192}
+		{38D84516-EB72-4479-95CD-3539CF66C06E} = {B5460C51-1323-4448-BEF9-EBB5DB9FC192}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F54425B9-099C-48A2-853A-221ED7B2CA23}
+	EndGlobalSection
+EndGlobal
