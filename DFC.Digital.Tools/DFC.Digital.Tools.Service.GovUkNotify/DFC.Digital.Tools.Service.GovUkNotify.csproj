@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DFC.Digital.Tools.Core\DFC.Digital.Tools.Core.csproj" />
     <ProjectReference Include="..\DFC.Digital.Tools.Data\DFC.Digital.Tools.Data.csproj" />
-    <ProjectReference Include="..\DFC.Digtal.Tools.Core\DFC.Digital.Tools.Core.csproj" />
   </ItemGroup>
 
 </Project>
