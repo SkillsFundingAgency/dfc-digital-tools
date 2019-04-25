@@ -15,3 +15,5 @@
 /DFC.Digital.Tools/DFC.Digital.Tools.Service.GovUkNotify/bin/Debug/netcoreapp2.1
 /DFC.Digital.Tools/DFC.Digital.Tools.Core/bin/Debug/netcoreapp2.1
 /DFC.Digital.Tools/DFC.Digital.Tools.Core/obj
+/DFC.Digital.Tools/DFC.Digital.Tools.Function.EmailNotification.Console/obj
+/DFC.Digital.Tools/DFC.Digital.Tools.Function.EmailNotification.Console/bin/Debug/netcoreapp2.1
