@@ -1,9 +1,9 @@
-﻿using DFC.Digital.Tools.Data.Interfaces;
-using DFC.Digital.Tools.Data.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DFC.Digital.Tools.Data.Interfaces;
+using DFC.Digital.Tools.Data.Models;
 
 namespace DFC.Digital.Tools.Repository.Pirean
 {
@@ -17,17 +17,12 @@ namespace DFC.Digital.Tools.Repository.Pirean
 
         public Task UpdateCitizenEmailNotificationAsync(CitizenEmailNotification emailNotification)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public Task ResetCitizenEmailNotificationAsync(IQueryable<CitizenEmailNotification> emailNotification)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public Task UpdateCitizenEmailNotificationAsync()
-        {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public async Task<CircuitBreakerDetails> GetCircuitBreakerStatusAsync()
@@ -37,12 +32,12 @@ namespace DFC.Digital.Tools.Repository.Pirean
 
         public Task OpenCircuitBreakerAsync()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public Task HalfOpenCircuitBreakerAsync()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         private static CircuitBreakerDetails GetCircuitBreakerDetails()
