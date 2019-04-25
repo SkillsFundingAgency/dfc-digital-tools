@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DFC.Digital.Tools.Data.Interfaces
 {
-    public interface IConfigurationProvider
+    public interface IConfigConfigurationProvider
     {
         T GetConfig<T>(string key);
 

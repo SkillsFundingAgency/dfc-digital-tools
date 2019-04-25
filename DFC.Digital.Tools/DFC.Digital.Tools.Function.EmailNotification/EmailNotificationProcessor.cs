@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DFC.Digital.Tools.Function.EmailNotification
 {
-    public class EmailNotificationProcessor
+    public class EmailNotificationProcessor : IProcessEmailNotifications
     {
         private readonly ISendCitizenNotification<CitizenEmailNotification> sendCitizenNotificationService;
         private readonly ICitizenNotificationRepository<CitizenEmailNotification> citizenEmailRepository;

@@ -1,16 +1,15 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using DFC.Digital.Tools.Data.Interfaces;
+using Microsoft.Extensions.Configuration;
 using System;
-using IConfigurationProvider = DFC.Digital.Tools.Data.Interfaces.IConfigurationProvider;
 
 namespace DFC.Digital.Tools.Core
 {
-    public class AppConfigurationProvider : IConfigurationProvider
+    public class AppConfigConfigurationProvider : IConfigConfigurationProvider
     {
-        private readonly IConfiguration configuration;
-
-        public AppConfigurationProvider(IConfiguration configuration)
+       // private readonly IConfiguration configuration;
+        public AppConfigConfigurationProvider()
         {
-            this.configuration = configuration;
+           // this.configuration = configuration;
         }
 
         public void Add<T>(string key, T value)
@@ -20,13 +19,17 @@ namespace DFC.Digital.Tools.Core
 
         public T GetConfig<T>(string key)
         {
-            var value = this.configuration[key];
+            // var value = this.configuration[key];
+            var value = key;
+
             return (T)Convert.ChangeType(value, typeof(T));
         }
 
         public T GetConfig<T>(string key, T defaultValue)
         {
-            var value = this.configuration[key];
+            // var value = this.configuration[key];
+            var value = key;
+
             return value == null ? defaultValue : (T)Convert.ChangeType(value, typeof(T));
         }
     }

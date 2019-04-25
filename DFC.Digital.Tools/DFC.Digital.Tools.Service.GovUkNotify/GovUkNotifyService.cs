@@ -11,9 +11,9 @@ namespace DFC.Digital.Tools.Service.GovUkNotify
     {
         private readonly IApplicationLogger applicationLogger;
         private readonly IGovUkNotifyClientProxy clientProxy;
-        private readonly IConfigurationProvider configuration;
+        private readonly IConfigConfigurationProvider configuration;
 
-        public GovUkNotifyService(IApplicationLogger applicationLogger, IGovUkNotifyClientProxy clientProxy, IConfigurationProvider configuration)
+        public GovUkNotifyService(IApplicationLogger applicationLogger, IGovUkNotifyClientProxy clientProxy, IConfigConfigurationProvider configuration)
         {
             this.applicationLogger = applicationLogger;
             this.clientProxy = clientProxy;

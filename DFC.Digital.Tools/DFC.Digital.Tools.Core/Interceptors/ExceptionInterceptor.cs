@@ -10,7 +10,7 @@ namespace DFC.Digital.Tools.Core
     {
         public const string NAME = "ExceptionPolicy";
 
-        private IApplicationLogger loggingService;
+        private readonly IApplicationLogger loggingService;
 
         public ExceptionInterceptor(IApplicationLogger logService)
         {
