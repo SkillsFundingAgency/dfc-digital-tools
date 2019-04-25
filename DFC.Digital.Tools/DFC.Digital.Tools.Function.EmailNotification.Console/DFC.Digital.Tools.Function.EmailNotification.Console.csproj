@@ -26,4 +26,10 @@
     <ProjectReference Include="..\DFC.Digital.Tools.Function.EmailNotification\DFC.Digital.Tools.Function.EmailNotification.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
