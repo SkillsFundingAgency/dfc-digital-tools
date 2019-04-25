@@ -4,6 +4,7 @@ using DFC.Digital.Tools.Data.Models;
 using Notify.Exceptions;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DFC.Digital.Tools.Service.GovUkNotify
 {
@@ -12,15 +13,17 @@ namespace DFC.Digital.Tools.Service.GovUkNotify
         private readonly IApplicationLogger applicationLogger;
         private readonly IGovUkNotifyClientProxy clientProxy;
         private readonly IConfigConfigurationProvider configuration;
+        private readonly ICircuitBreakerRepository circuitBreakerRepository;
 
-        public GovUkNotifyService(IApplicationLogger applicationLogger, IGovUkNotifyClientProxy clientProxy, IConfigConfigurationProvider configuration)
+        public GovUkNotifyService(IApplicationLogger applicationLogger, IGovUkNotifyClientProxy clientProxy, IConfigConfigurationProvider configuration, ICircuitBreakerRepository circuitBreakerRepository)
         {
             this.applicationLogger = applicationLogger;
             this.clientProxy = clientProxy;
             this.configuration = configuration;
+            this.circuitBreakerRepository = circuitBreakerRepository;
         }
 
-        public bool SendCitizenNotification(CitizenEmailNotification notification)
+        public async Task<bool> SendCitizenNotificationAsync(CitizenEmailNotification notification)
         {
             try
             {
@@ -33,8 +36,14 @@ namespace DFC.Digital.Tools.Service.GovUkNotify
             }
             catch (NotifyClientException ex)
             {
-                applicationLogger.Error("Failed to send VOC email", ex);
-                return false;
+                applicationLogger.Error("Failed to send citizen email with GovUKNotify", ex);
+                if (ex.HResult == 429)
+                {
+                     await circuitBreakerRepository.OpenCircuitBreakerAsync();
+                    throw new RateLimitException();
+                }
+
+               return false;
             }
         }
 

@@ -6,7 +6,7 @@ namespace DFC.Digital.Tools.Core
 {
     public class DFCLogger : IApplicationLogger
     {
-        private ILogger logService;
+        private readonly ILogger logService;
 
         public DFCLogger(ILogger logService)
         {

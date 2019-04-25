@@ -7,8 +7,10 @@ namespace DFC.Digital.Tools.Data.Interfaces
     public interface ICitizenNotificationRepository<T>
     where T : class
     {
-       Task<IQueryable<CitizenEmailNotification>> GetCitizenEmailNotificationsAsync();
+       Task<IQueryable<T>> GetCitizenEmailNotificationsAsync();
 
-       Task UpdateCitizenEmailNotificationAsync();
+       Task UpdateCitizenEmailNotificationAsync(T emailNotification);
+
+       Task ResetCitizenEmailNotificationAsync(IQueryable<T> emailNotification);
     }
 }
