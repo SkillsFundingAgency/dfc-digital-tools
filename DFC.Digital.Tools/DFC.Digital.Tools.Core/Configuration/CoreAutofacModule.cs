@@ -1,6 +1,8 @@
 ﻿using Autofac;
 using Castle.DynamicProxy;
+using Microsoft.Extensions.Configuration;
 using NLog;
+using System.IO;
 
 namespace DFC.Digital.Tools.Core
 {
@@ -17,6 +19,12 @@ namespace DFC.Digital.Tools.Core
             LogManager.ThrowExceptions = true;
 
             builder.RegisterInstance(LogManager.GetLogger(nameof(DFCLogger))).As<ILogger>();
+
+            IConfiguration config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", true, true)
+                .Build();
+            builder.RegisterInstance(config).As<IConfiguration>();
 
             if (builder.RunningMode() == RunMode.Console)
             {

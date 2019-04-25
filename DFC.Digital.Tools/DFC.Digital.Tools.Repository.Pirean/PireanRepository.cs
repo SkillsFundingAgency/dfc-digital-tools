@@ -29,15 +29,15 @@ namespace DFC.Digital.Tools.Repository.Pirean
             throw new System.NotImplementedException();
         }
 
+        private static SemaphoreFlagDetails GetSemaphoreFlagDetails()
+        {
+            return new SemaphoreFlagDetails { CircuitClosed = true };
+        }
+
         private IEnumerable<CitizenEmailNotification> GetList()
         {
             yield return new CitizenEmailNotification { EmailAddress = nameof(CitizenEmailNotification.EmailAddress), EmailPersonalisation = GetGovUkNotifyPersonalisation() };
             yield return new CitizenEmailNotification { EmailAddress = nameof(CitizenEmailNotification.EmailAddress), EmailPersonalisation = GetGovUkNotifyPersonalisation() };
-        }
-
-        private SemaphoreFlagDetails GetSemaphoreFlagDetails()
-        {
-            return new SemaphoreFlagDetails { CircuitClosed = true };
         }
 
         private GovUkNotifyPersonalisation GetGovUkNotifyPersonalisation()

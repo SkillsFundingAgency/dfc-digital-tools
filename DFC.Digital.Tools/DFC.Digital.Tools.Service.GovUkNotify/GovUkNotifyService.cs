@@ -24,7 +24,11 @@ namespace DFC.Digital.Tools.Service.GovUkNotify
         {
             try
             {
-                var response = clientProxy.SendEmail(configuration.GetConfig<string>(Constants.GovUkNotifyApiKey), notification.EmailAddress, configuration.GetConfig<string>(Constants.GovUkNotifyTemplateId), this.Convert(notification.EmailPersonalisation));
+                var response = clientProxy.SendEmail(
+                    configuration.GetConfigSectionKey<string>(Constants.GovUkNotifySection, Constants.GovUkNotifyApiKey),
+                    notification.EmailAddress,
+                    configuration.GetConfigSectionKey<string>(Constants.GovUkNotifySection, Constants.GovUkNotifyTemplateId),
+                    this.Convert(notification.EmailPersonalisation));
                 return !string.IsNullOrEmpty(response?.id);
             }
             catch (NotifyClientException ex)

@@ -16,7 +16,7 @@ namespace DFC.Digital.Tools.Function.EmailNotification.Console
             }
             catch (Exception ex)
             {
-                if (ex is System.Reflection.ReflectionTypeLoadException)
+                if (ex is ReflectionTypeLoadException)
                 {
                     var typeLoadException = ex as ReflectionTypeLoadException;
                     var loaderExceptions = typeLoadException.LoaderExceptions;
