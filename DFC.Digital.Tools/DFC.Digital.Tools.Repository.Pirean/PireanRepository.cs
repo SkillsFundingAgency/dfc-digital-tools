@@ -31,13 +31,21 @@ namespace DFC.Digital.Tools.Repository.Pirean
 
         private IEnumerable<CitizenEmailNotification> GetList()
         {
-            yield return new CitizenEmailNotification { EmailAddress = nameof(CitizenEmailNotification.EmailAddress) };
-            yield return new CitizenEmailNotification { EmailAddress = nameof(CitizenEmailNotification.EmailAddress) };
+            yield return new CitizenEmailNotification { EmailAddress = nameof(CitizenEmailNotification.EmailAddress), EmailPersonalisation = GetGovUkNotifyPersonalisation() };
+            yield return new CitizenEmailNotification { EmailAddress = nameof(CitizenEmailNotification.EmailAddress), EmailPersonalisation = GetGovUkNotifyPersonalisation() };
         }
 
         private SemaphoreFlagDetails GetSemaphoreFlagDetails()
         {
             return new SemaphoreFlagDetails { CircuitClosed = true };
+        }
+
+        private GovUkNotifyPersonalisation GetGovUkNotifyPersonalisation()
+        {
+            var citizenDetails = new GovUkNotifyPersonalisation();
+            citizenDetails.Personalisation.Add(nameof(CitizenEmailNotification.Firstname), nameof(CitizenEmailNotification.Firstname));
+            citizenDetails.Personalisation.Add(nameof(CitizenEmailNotification.Lastname), nameof(CitizenEmailNotification.Lastname));
+            return citizenDetails;
         }
     }
 }
