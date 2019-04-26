@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using System;
 
-namespace DFC.Digital.Tools.Repository.Accounts.DataModel
+namespace DFC.Digital.Tools.Repository.Accounts
 {
     public partial class DFCUserAccountsContext : DbContext
     {
