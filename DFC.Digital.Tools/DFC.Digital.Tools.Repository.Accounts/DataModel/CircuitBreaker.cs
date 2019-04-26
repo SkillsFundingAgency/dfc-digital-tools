@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DFC.Digital.Tools.Repository.Accounts.DataModel
+namespace DFC.Digital.Tools.Repository.Accounts
 {
     public partial class CircuitBreaker
     {
