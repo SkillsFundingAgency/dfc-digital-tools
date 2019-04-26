@@ -25,7 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DFC.Digital.Tools.Core\DFC.Digital.Tools.Core.csproj" />
     <ProjectReference Include="..\DFC.Digital.Tools.Data\DFC.Digital.Tools.Data.csproj" />
-    <ProjectReference Include="..\DFC.Digital.Tools.Repository.Pirean\DFC.Digital.Tools.Repository.Accounts.csproj" />
+    <ProjectReference Include="..\DFC.Digital.Tools.Repository.Accounts\DFC.Digital.Tools.Repository.Accounts.csproj" />
     <ProjectReference Include="..\DFC.Digital.Tools.Service.GovUkNotify\DFC.Digital.Tools.Service.GovUkNotify.csproj" />
   </ItemGroup>
 

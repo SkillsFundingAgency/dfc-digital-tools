@@ -9,11 +9,11 @@ namespace DFC.Digital.Tools.Repository.Pirean
 {
     public class AccountsRepository : ICitizenNotificationRepository<CitizenEmailNotification>, ICircuitBreakerRepository
     {
-        public Task<IQueryable<CitizenEmailNotification>> GetCitizenEmailNotificationsAsync()
+        public async Task<IQueryable<CitizenEmailNotification>> GetCitizenEmailNotificationsAsync()
         {
-            //var result = await Task.Run(GetList);
-            //return result.AsQueryable();
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            var result = await Task.Run(GetList);
+            return result.AsQueryable();
         }
 
         public Task UpdateCitizenEmailNotificationAsync(CitizenEmailNotification emailNotification)
@@ -26,10 +26,10 @@ namespace DFC.Digital.Tools.Repository.Pirean
             throw new NotImplementedException();
         }
 
-        public Task<CircuitBreakerDetails> GetCircuitBreakerStatusAsync()
+        public async Task<CircuitBreakerDetails> GetCircuitBreakerStatusAsync()
         {
-            //return await Task.Run(GetCircuitBreakerDetails);
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            return await Task.Run(GetCircuitBreakerDetails);
         }
 
         public Task OpenCircuitBreakerAsync()
