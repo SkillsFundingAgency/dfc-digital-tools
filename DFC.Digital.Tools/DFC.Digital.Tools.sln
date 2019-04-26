@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.572
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28721.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Data", "DFC.Digital.Tools.Data\DFC.Digital.Tools.Data.csproj", "{25760082-EB23-4748-AFD6-B4D5CE50FDC4}"
 EndProject
@@ -39,6 +39,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Core", "D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Function.EmailNotification.Console", "DFC.Digital.Tools.Function.EmailNotification.Console\DFC.Digital.Tools.Function.EmailNotification.Console.csproj", "{6C4F6A94-0A3C-4CE0-B5F3-728C474C1175}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Function.Common", "DFC.Digital.Tools.Function.Common\DFC.Digital.Tools.Function.Common.csproj", "{7D23EE25-8365-4DA9-AC65-208528E47178}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.AzureFunctions", "DFC.Digital.Tools.AzureFunctions\DFC.Digital.Tools.AzureFunctions.csproj", "{928BF50F-2AAE-48D7-AD09-2513C7145A1C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +73,14 @@ Global
 		{6C4F6A94-0A3C-4CE0-B5F3-728C474C1175}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C4F6A94-0A3C-4CE0-B5F3-728C474C1175}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C4F6A94-0A3C-4CE0-B5F3-728C474C1175}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D23EE25-8365-4DA9-AC65-208528E47178}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D23EE25-8365-4DA9-AC65-208528E47178}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D23EE25-8365-4DA9-AC65-208528E47178}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D23EE25-8365-4DA9-AC65-208528E47178}.Release|Any CPU.Build.0 = Release|Any CPU
+		{928BF50F-2AAE-48D7-AD09-2513C7145A1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{928BF50F-2AAE-48D7-AD09-2513C7145A1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{928BF50F-2AAE-48D7-AD09-2513C7145A1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{928BF50F-2AAE-48D7-AD09-2513C7145A1C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,6 +94,8 @@ Global
 		{DE993C7F-943D-48A0-9D9B-349365AD13BC} = {1B9E560E-91D7-4311-B216-31CDCACB2BFF}
 		{90A2FAF9-DA16-4371-86CB-E2A8039BB3C6} = {D498D0D7-485A-45D2-8F9B-822CAA10C894}
 		{6C4F6A94-0A3C-4CE0-B5F3-728C474C1175} = {38D84516-EB72-4479-95CD-3539CF66C06E}
+		{7D23EE25-8365-4DA9-AC65-208528E47178} = {1B9E560E-91D7-4311-B216-31CDCACB2BFF}
+		{928BF50F-2AAE-48D7-AD09-2513C7145A1C} = {5237DF78-9698-4569-B93F-AF3CB016D4B5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F54425B9-099C-48A2-853A-221ED7B2CA23}
