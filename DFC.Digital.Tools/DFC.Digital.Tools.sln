@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.572
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28721.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Data", "DFC.Digital.Tools.Data\DFC.Digital.Tools.Data.csproj", "{25760082-EB23-4748-AFD6-B4D5CE50FDC4}"
 EndProject
@@ -45,9 +45,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.AzureFunc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Debug", "Debug", "{72E0F444-037E-4CD7-93F8-4A81B29AB4AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccountsRepositoryTests", "AccountsRepositoryTests\AccountsRepositoryTests.csproj", "{3BEB17AC-8CFB-447B-9E06-EA17A291D074}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AccountsRepositoryTests", "AccountsRepositoryTests\AccountsRepositoryTests.csproj", "{3BEB17AC-8CFB-447B-9E06-EA17A291D074}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DFC.Digital.Tools.Service.Accounts", "DFC.Digital.Tools.Service.Accounts\DFC.Digital.Tools.Service.Accounts.csproj", "{58EAEC6C-BD8E-4FEA-A28B-78557FF95ADC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Service.Accounts", "DFC.Digital.Tools.Service.Accounts\DFC.Digital.Tools.Service.Accounts.csproj", "{58EAEC6C-BD8E-4FEA-A28B-78557FF95ADC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functions", "Functions", "{867892DB-6418-44EB-86B2-B356482AFFD6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{38048B2C-067F-4AA2-8A92-35514DE9FFFE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Repositories", "Repositories", "{DCDE302A-1885-4331-8302-BF876DFE13ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DFC.Digital.Tools.Function.EmailNotification.UnitTests", "DFC.Digital.Tools.Function.EmailNotification.UnitTests\DFC.Digital.Tools.Function.EmailNotification.UnitTests.csproj", "{79A80A84-486B-4D5D-94EE-EC8CAF9BBD6F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DFC.Digital.Tools.Service.GovUkNotify.UnitTests", "DFC.Digital.Tools.Service.GovUkNotify.UnitTests\DFC.Digital.Tools.Service.GovUkNotify.UnitTests.csproj", "{7E5B4892-4B78-41B0-A920-FE7AA3E2895A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -95,6 +105,14 @@ Global
 		{58EAEC6C-BD8E-4FEA-A28B-78557FF95ADC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58EAEC6C-BD8E-4FEA-A28B-78557FF95ADC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58EAEC6C-BD8E-4FEA-A28B-78557FF95ADC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79A80A84-486B-4D5D-94EE-EC8CAF9BBD6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79A80A84-486B-4D5D-94EE-EC8CAF9BBD6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79A80A84-486B-4D5D-94EE-EC8CAF9BBD6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79A80A84-486B-4D5D-94EE-EC8CAF9BBD6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E5B4892-4B78-41B0-A920-FE7AA3E2895A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E5B4892-4B78-41B0-A920-FE7AA3E2895A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E5B4892-4B78-41B0-A920-FE7AA3E2895A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E5B4892-4B78-41B0-A920-FE7AA3E2895A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -113,6 +131,11 @@ Global
 		{72E0F444-037E-4CD7-93F8-4A81B29AB4AD} = {B5460C51-1323-4448-BEF9-EBB5DB9FC192}
 		{3BEB17AC-8CFB-447B-9E06-EA17A291D074} = {72E0F444-037E-4CD7-93F8-4A81B29AB4AD}
 		{58EAEC6C-BD8E-4FEA-A28B-78557FF95ADC} = {368437FC-0AEC-4E45-8978-8687CFB61FA1}
+		{867892DB-6418-44EB-86B2-B356482AFFD6} = {ABA7B9B7-CB6E-4FCC-93CA-826B0434FED1}
+		{38048B2C-067F-4AA2-8A92-35514DE9FFFE} = {ABA7B9B7-CB6E-4FCC-93CA-826B0434FED1}
+		{DCDE302A-1885-4331-8302-BF876DFE13ED} = {ABA7B9B7-CB6E-4FCC-93CA-826B0434FED1}
+		{79A80A84-486B-4D5D-94EE-EC8CAF9BBD6F} = {867892DB-6418-44EB-86B2-B356482AFFD6}
+		{7E5B4892-4B78-41B0-A920-FE7AA3E2895A} = {38048B2C-067F-4AA2-8A92-35514DE9FFFE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F54425B9-099C-48A2-853A-221ED7B2CA23}

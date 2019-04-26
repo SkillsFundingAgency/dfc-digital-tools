@@ -7,6 +7,6 @@ namespace DFC.Digital.Tools.Data.Interfaces
 {
     public interface IProcessEmailNotifications
     {
-        Task ProcessEmailNotifications();
+        Task ProcessEmailNotificationsAsync();
     }
 }

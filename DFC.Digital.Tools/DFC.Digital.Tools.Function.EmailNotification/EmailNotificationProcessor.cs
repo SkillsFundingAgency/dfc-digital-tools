@@ -29,7 +29,7 @@ namespace DFC.Digital.Tools.Function.EmailNotification
             this.configuration = configuration;
         }
 
-        public async Task ProcessEmailNotifications()
+        public async Task ProcessEmailNotificationsAsync()
         {
             var circuitBreaker = await circuitBreakerRepository.GetCircuitBreakerStatusAsync();
 

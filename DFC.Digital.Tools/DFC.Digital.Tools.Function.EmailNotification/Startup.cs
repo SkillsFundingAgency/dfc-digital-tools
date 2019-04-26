@@ -22,7 +22,7 @@ namespace DFC.Digital.Tools.Function.EmailNotification
         {
             var container = ConfigureContainer(mode);
             var processEmailNotificationsService = container.Resolve<IProcessEmailNotifications>();
-            await processEmailNotificationsService.ProcessEmailNotifications();
+            await processEmailNotificationsService.ProcessEmailNotificationsAsync();
         }
     }
 }
