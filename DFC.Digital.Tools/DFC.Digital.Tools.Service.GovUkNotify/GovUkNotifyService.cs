@@ -37,7 +37,7 @@ namespace DFC.Digital.Tools.Service.GovUkNotify
             catch (NotifyClientException ex)
             {
                 applicationLogger.Error("Failed to send citizen email with GovUKNotify", ex);
-                if (ex.Message.ToLowerInvariant().Contains("status code 429"))
+                if (ex.Message.ToLowerInvariant().Contains(configuration.GetConfigSectionKey<string>(Constants.GovUkNotifySection, Constants.GovUkNotifyRateLimitException)))
                 {
                      await circuitBreakerRepository.OpenCircuitBreakerAsync();
                     throw new RateLimitException();
@@ -51,11 +51,11 @@ namespace DFC.Digital.Tools.Service.GovUkNotify
         {
             if (govUkNotifyPersonalisation?.Personalisation != null)
             {
-                foreach (var item in govUkNotifyPersonalisation?.Personalisation?.ToArray())
+                foreach (var item in govUkNotifyPersonalisation.Personalisation?.ToArray())
                 {
-                    if (string.IsNullOrEmpty(item.Value) && govUkNotifyPersonalisation != null)
+                    if (string.IsNullOrEmpty(item.Value))
                     {
-                        govUkNotifyPersonalisation.Personalisation[item.Key] = "uknown";
+                        govUkNotifyPersonalisation.Personalisation[item.Key] = Constants.UnknownValue;
                     }
                 }
 
