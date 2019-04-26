@@ -9,8 +9,14 @@ namespace DFC.Digital.Tools.AzureFunctions
 {
     public static class ProcessEmailNotificationsFunction
     {
+        /// <summary>
+        /// Runs the specified my timer. Every minute every hour
+        /// </summary>
+        /// <param name="myTimer">My timer.</param>
+        /// <param name="log">The log.</param>
+        /// <returns>N/A</returns>
         [FunctionName("ProcessEmailNotificationsFunction")]
-        public static async Task Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer, ILogger log)
+        public static async Task Run([TimerTrigger("0 * * ? * * *")]TimerInfo myTimer, ILogger log)
         {
             Function.Common.ConfigureLog.ConfigureNLogWithAppInsightsTarget();
             log.LogInformation($"{nameof(ProcessEmailNotificationsFunction)} Timer trigger function executed at: {DateTime.Now}");
