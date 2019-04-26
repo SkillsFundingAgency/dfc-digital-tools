@@ -2,7 +2,7 @@
 
 namespace DFC.Digital.Tools.Repository.Pirean
 {
-    public class PireanAutofacModule : Module
+    public class AccountsAutofacModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28721.148
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Data", "DFC.Digital.Tools.Data\DFC.Digital.Tools.Data.csproj", "{25760082-EB23-4748-AFD6-B4D5CE50FDC4}"
 EndProject
@@ -31,17 +31,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AzureFuncs", "AzureFuncs", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Service.GovUkNotify", "DFC.Digital.Tools.Service.GovUkNotify\DFC.Digital.Tools.Service.GovUkNotify.csproj", "{63258818-2B07-4850-8505-5981E4B1BD12}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Repository.Pirean", "DFC.Digital.Tools.Repository.Pirean\DFC.Digital.Tools.Repository.Pirean.csproj", "{6B182591-0EBC-49DA-8AC7-B8D106667056}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Repository.Accounts", "DFC.Digital.Tools.Repository.Accounts\DFC.Digital.Tools.Repository.Accounts.csproj", "{6B182591-0EBC-49DA-8AC7-B8D106667056}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Function.EmailNotification", "DFC.Digital.Tools.Function.EmailNotification\DFC.Digital.Tools.Function.EmailNotification.csproj", "{DE993C7F-943D-48A0-9D9B-349365AD13BC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Core", "DFC.Digital.Tools.Core\DFC.Digital.Tools.Core.csproj", "{90A2FAF9-DA16-4371-86CB-E2A8039BB3C6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Function.EmailNotification.Console", "DFC.Digital.Tools.Function.EmailNotification.Console\DFC.Digital.Tools.Function.EmailNotification.Console.csproj", "{6C4F6A94-0A3C-4CE0-B5F3-728C474C1175}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DFC.Digital.Tools.Function.Common", "DFC.Digital.Tools.Function.Common\DFC.Digital.Tools.Function.Common.csproj", "{ED5D0487-7AFA-4060-BEAB-098825C5DADB}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DFC.Digital.Tools.AzureFunctions", "DFC.Digital.Tools.AzureFunctions\DFC.Digital.Tools.AzureFunctions.csproj", "{C11CE7B4-0C85-4D90-83EC-6EC541388979}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,14 +69,6 @@ Global
 		{6C4F6A94-0A3C-4CE0-B5F3-728C474C1175}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C4F6A94-0A3C-4CE0-B5F3-728C474C1175}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C4F6A94-0A3C-4CE0-B5F3-728C474C1175}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ED5D0487-7AFA-4060-BEAB-098825C5DADB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ED5D0487-7AFA-4060-BEAB-098825C5DADB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ED5D0487-7AFA-4060-BEAB-098825C5DADB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ED5D0487-7AFA-4060-BEAB-098825C5DADB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C11CE7B4-0C85-4D90-83EC-6EC541388979}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C11CE7B4-0C85-4D90-83EC-6EC541388979}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C11CE7B4-0C85-4D90-83EC-6EC541388979}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C11CE7B4-0C85-4D90-83EC-6EC541388979}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -94,8 +82,6 @@ Global
 		{DE993C7F-943D-48A0-9D9B-349365AD13BC} = {1B9E560E-91D7-4311-B216-31CDCACB2BFF}
 		{90A2FAF9-DA16-4371-86CB-E2A8039BB3C6} = {D498D0D7-485A-45D2-8F9B-822CAA10C894}
 		{6C4F6A94-0A3C-4CE0-B5F3-728C474C1175} = {38D84516-EB72-4479-95CD-3539CF66C06E}
-		{ED5D0487-7AFA-4060-BEAB-098825C5DADB} = {1B9E560E-91D7-4311-B216-31CDCACB2BFF}
-		{C11CE7B4-0C85-4D90-83EC-6EC541388979} = {5237DF78-9698-4569-B93F-AF3CB016D4B5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F54425B9-099C-48A2-853A-221ED7B2CA23}
