@@ -37,7 +37,7 @@ namespace DFC.Digital.Tools.Service.GovUkNotify
             catch (NotifyClientException ex)
             {
                 applicationLogger.Error("Failed to send citizen email with GovUKNotify", ex);
-                if (ex.HResult == 429)
+                if (ex.Message.ToLowerInvariant().Contains("status code 429"))
                 {
                      await circuitBreakerRepository.OpenCircuitBreakerAsync();
                     throw new RateLimitException();

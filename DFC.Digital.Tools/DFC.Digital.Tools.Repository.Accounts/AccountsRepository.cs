@@ -16,14 +16,14 @@ namespace DFC.Digital.Tools.Repository.Pirean
             return result.AsQueryable();
         }
 
-        public Task UpdateCitizenEmailNotificationAsync(CitizenEmailNotification emailNotification)
+        public async Task UpdateCitizenEmailNotificationAsync(CitizenEmailNotification emailNotification)
         {
-            throw new NotImplementedException();
+            await Task.Run(() => Task.Delay(1));
         }
 
-        public Task ResetCitizenEmailNotificationAsync(IQueryable<CitizenEmailNotification> emailNotification)
+        public async Task ResetCitizenEmailNotificationAsync(IQueryable<CitizenEmailNotification> emailNotification)
         {
-            throw new NotImplementedException();
+            await Task.Run(() => Task.Delay(1));
         }
 
         public async Task<CircuitBreakerDetails> GetCircuitBreakerStatusAsync()
@@ -32,14 +32,14 @@ namespace DFC.Digital.Tools.Repository.Pirean
             return await Task.Run(() => GetCircuitBreakerDetails());
         }
 
-        public Task OpenCircuitBreakerAsync()
+        public async Task OpenCircuitBreakerAsync()
         {
-            throw new NotImplementedException();
+            await Task.Run(() => Task.Delay(1));
         }
 
-        public Task HalfOpenCircuitBreakerAsync()
+        public async Task HalfOpenCircuitBreakerAsync()
         {
-            throw new NotImplementedException();
+            await Task.Run(() => Task.Delay(1));
         }
 
         private static CircuitBreakerDetails GetCircuitBreakerDetails()
@@ -58,8 +58,7 @@ namespace DFC.Digital.Tools.Repository.Pirean
 
         private IEnumerable<CitizenEmailNotification> GetList()
         {
-            yield return new CitizenEmailNotification { EmailAddress = nameof(CitizenEmailNotification.EmailAddress), EmailPersonalisation = GetGovUkNotifyPersonalisation() };
-            yield return new CitizenEmailNotification { EmailAddress = nameof(CitizenEmailNotification.EmailAddress), EmailPersonalisation = GetGovUkNotifyPersonalisation() };
+            yield return new CitizenEmailNotification { EmailAddress = "trevk15@yahoo.co.uk", EmailPersonalisation = GetGovUkNotifyPersonalisation() };
         }
 
         private GovUkNotifyPersonalisation GetGovUkNotifyPersonalisation()
