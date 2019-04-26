@@ -12,7 +12,7 @@ namespace DFC.Digital.Tools.Repository.Pirean
         public async Task<IQueryable<CitizenEmailNotification>> GetCitizenEmailNotificationsAsync()
         {
             //throw new NotImplementedException();
-            var result = await Task.Run(GetList);
+            var result = await Task.Run(() => GetList());
             return result.AsQueryable();
         }
 
@@ -29,7 +29,7 @@ namespace DFC.Digital.Tools.Repository.Pirean
         public async Task<CircuitBreakerDetails> GetCircuitBreakerStatusAsync()
         {
             //throw new NotImplementedException();
-            return await Task.Run(GetCircuitBreakerDetails);
+            return await Task.Run(() => GetCircuitBreakerDetails());
         }
 
         public async Task OpenCircuitBreakerAsync()
