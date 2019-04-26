@@ -1,18 +1,19 @@
-﻿using System;
+﻿using DFC.Digital.Tools.Data.Interfaces;
+using DFC.Digital.Tools.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DFC.Digital.Tools.Data.Interfaces;
-using DFC.Digital.Tools.Data.Models;
 
 namespace DFC.Digital.Tools.Repository.Pirean
 {
-    public class PireanRepository : ICitizenNotificationRepository<CitizenEmailNotification>, ICircuitBreakerRepository
+    public class AccountsRepository : ICitizenNotificationRepository<CitizenEmailNotification>, ICircuitBreakerRepository
     {
-        public async Task<IQueryable<CitizenEmailNotification>> GetCitizenEmailNotificationsAsync()
+        public Task<IQueryable<CitizenEmailNotification>> GetCitizenEmailNotificationsAsync()
         {
-          var result = await Task.Run(GetList);
-          return result.AsQueryable();
+            //var result = await Task.Run(GetList);
+            //return result.AsQueryable();
+            throw new NotImplementedException();
         }
 
         public Task UpdateCitizenEmailNotificationAsync(CitizenEmailNotification emailNotification)
@@ -25,9 +26,10 @@ namespace DFC.Digital.Tools.Repository.Pirean
             throw new NotImplementedException();
         }
 
-        public async Task<CircuitBreakerDetails> GetCircuitBreakerStatusAsync()
+        public Task<CircuitBreakerDetails> GetCircuitBreakerStatusAsync()
         {
-            return await Task.Run(GetCircuitBreakerDetails);
+            //return await Task.Run(GetCircuitBreakerDetails);
+            throw new NotImplementedException();
         }
 
         public Task OpenCircuitBreakerAsync()

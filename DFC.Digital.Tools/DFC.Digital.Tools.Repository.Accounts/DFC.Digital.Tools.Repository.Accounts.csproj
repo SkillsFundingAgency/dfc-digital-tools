@@ -16,6 +16,8 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.4" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -24,6 +26,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DFC.Digital.Tools.Data\DFC.Digital.Tools.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DataModel\" />
   </ItemGroup>
 
 </Project>

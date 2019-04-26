@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28721.148
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Data", "DFC.Digital.Tools.Data\DFC.Digital.Tools.Data.csproj", "{25760082-EB23-4748-AFD6-B4D5CE50FDC4}"
 EndProject
@@ -31,13 +31,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AzureFuncs", "AzureFuncs", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Service.GovUkNotify", "DFC.Digital.Tools.Service.GovUkNotify\DFC.Digital.Tools.Service.GovUkNotify.csproj", "{63258818-2B07-4850-8505-5981E4B1BD12}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Repository.Pirean", "DFC.Digital.Tools.Repository.Pirean\DFC.Digital.Tools.Repository.Pirean.csproj", "{6B182591-0EBC-49DA-8AC7-B8D106667056}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Repository.Accounts", "DFC.Digital.Tools.Repository.Accounts\DFC.Digital.Tools.Repository.Accounts.csproj", "{6B182591-0EBC-49DA-8AC7-B8D106667056}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Function.EmailNotification", "DFC.Digital.Tools.Function.EmailNotification\DFC.Digital.Tools.Function.EmailNotification.csproj", "{DE993C7F-943D-48A0-9D9B-349365AD13BC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Core", "DFC.Digital.Tools.Core\DFC.Digital.Tools.Core.csproj", "{90A2FAF9-DA16-4371-86CB-E2A8039BB3C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DFC.Digital.Tools.Function.EmailNotification.Console", "DFC.Digital.Tools.Function.EmailNotification.Console\DFC.Digital.Tools.Function.EmailNotification.Console.csproj", "{6C4F6A94-0A3C-4CE0-B5F3-728C474C1175}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Function.EmailNotification.Console", "DFC.Digital.Tools.Function.EmailNotification.Console\DFC.Digital.Tools.Function.EmailNotification.Console.csproj", "{6C4F6A94-0A3C-4CE0-B5F3-728C474C1175}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

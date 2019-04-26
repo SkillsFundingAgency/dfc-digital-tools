@@ -13,7 +13,7 @@ namespace DFC.Digital.Tools.Function.EmailNotification
         {
             var builder = ConfigureDI.ConfigureContainerWithCommonModules(mode);
             builder.RegisterModule<EmailNotificationAutofacModule>();
-            builder.RegisterModule<PireanAutofacModule>();
+            builder.RegisterModule<AccountsAutofacModule>();
             builder.RegisterModule<GovUkNotifyAutofacModule>();
             return builder.Build().BeginLifetimeScope();
         }
