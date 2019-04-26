@@ -59,7 +59,6 @@ namespace DFC.Digital.Tools.Repository.Pirean
         private IEnumerable<CitizenEmailNotification> GetList()
         {
             yield return new CitizenEmailNotification { EmailAddress = "trevk15@yahoo.co.uk", EmailPersonalisation = GetGovUkNotifyPersonalisation() };
-            yield return new CitizenEmailNotification { EmailAddress = "trevk155@gmail.com", EmailPersonalisation = GetGovUkNotifyPersonalisation() };
         }
 
         private GovUkNotifyPersonalisation GetGovUkNotifyPersonalisation()
