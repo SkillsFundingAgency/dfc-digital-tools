@@ -7,10 +7,10 @@ namespace DFC.Digital.Tools.Repository.Accounts
     {
         public int Id { get; set; }
 
-        public DateTime? LastCircuitOpenDate { get; set; }
+        public DateTime LastCircuitOpenDate { get; set; }
 
         public string CircuitBreakerStatus { get; set; }
 
-        public int? HalfOpenRetryCount { get; set; }
+        public int HalfOpenRetryCount { get; set; }
     }
 }

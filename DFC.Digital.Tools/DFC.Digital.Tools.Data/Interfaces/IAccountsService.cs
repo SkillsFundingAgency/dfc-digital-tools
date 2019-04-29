@@ -8,8 +8,10 @@ namespace DFC.Digital.Tools.Data.Interfaces
 {
     public interface IAccountsService
     {
-        Task<IEnumerable<string>> GetNextBatchOfEmails(int batchSize);
+        Task<IEnumerable<Account>> GetNextBatchOfEmailsAsync(int batchSize);
 
-        Task InsertAudit(string email, NotificationProcessingStatus auditStatus, string note = null);
-   }
+        Task InsertAuditAsync(AccountNotificationAudit accountNotificationAudit);
+
+        Task<CircuitBreakerDetails> GetCircuitBreakerStatusAsync();
+    }
 }

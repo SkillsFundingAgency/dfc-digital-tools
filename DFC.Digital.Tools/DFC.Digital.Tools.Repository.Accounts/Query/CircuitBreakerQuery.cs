@@ -1,4 +1,5 @@
 ﻿using DFC.Digital.Tools.Data.Interfaces;
+using DFC.Digital.Tools.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,21 +8,25 @@ using System.Text;
 
 namespace DFC.Digital.Tools.Repository.Accounts.Query
 {
-    public class CircuitBreakerQuery : IQueryRepository<CircuitBreaker>
+    public class CircuitBreakerQuery : ICircuitBreakerQueryRepository
     {
-        public IQueryable<CircuitBreaker> GetMany(Expression<Func<CircuitBreaker, bool>> where)
+        private readonly DFCUserAccountsContext accountsContext;
+
+        public CircuitBreakerQuery(DFCUserAccountsContext accountsContext)
         {
-            throw new NotImplementedException();
+            this.accountsContext = accountsContext;
         }
 
-        IQueryable<CircuitBreaker> IQueryRepository<CircuitBreaker>.GetAll()
+        public CircuitBreakerDetails GetBreakerDetails()
         {
-            throw new NotImplementedException();
-        }
-
-        IQueryable<CircuitBreaker> IQueryRepository<CircuitBreaker>.GetMany(Expression<Func<CircuitBreaker, bool>> where)
-        {
-            throw new NotImplementedException();
+            var breaker = (from b in accountsContext.CircuitBreaker
+                          select new CircuitBreakerDetails
+                          {
+                              HalfOpenRetryCount = b.HalfOpenRetryCount,
+                              LastCircuitOpenDate = b.LastCircuitOpenDate,
+                              CircuitBreakerStatus = (CircuitBreakerStatus)Enum.Parse(typeof(CircuitBreakerStatus), b.CircuitBreakerStatus)
+                          }).FirstOrDefault();
+            return breaker;
         }
     }
 }

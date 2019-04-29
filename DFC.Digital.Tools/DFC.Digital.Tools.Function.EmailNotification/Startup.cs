@@ -1,7 +1,8 @@
 ﻿using Autofac;
 using DFC.Digital.Tools.Core;
 using DFC.Digital.Tools.Data.Interfaces;
-using DFC.Digital.Tools.Repository.Pirean;
+using DFC.Digital.Tools.Repository.Accounts;
+using DFC.Digital.Tools.Service.Accounts;
 using DFC.Digital.Tools.Service.GovUkNotify;
 using System.Threading.Tasks;
 
@@ -13,8 +14,9 @@ namespace DFC.Digital.Tools.Function.EmailNotification
         {
             var builder = ConfigureDI.ConfigureContainerWithCommonModules(mode);
             builder.RegisterModule<EmailNotificationAutofacModule>();
-            builder.RegisterModule<AccountsAutofacModule>();
+            builder.RegisterModule<AccountsRepositoryAutofacModule>();
             builder.RegisterModule<GovUkNotifyAutofacModule>();
+            builder.RegisterModule<AccountsServiceAutofacModule>();
             return builder.Build().BeginLifetimeScope();
         }
 
