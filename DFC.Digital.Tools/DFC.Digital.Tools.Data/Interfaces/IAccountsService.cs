@@ -11,5 +11,7 @@ namespace DFC.Digital.Tools.Data.Interfaces
         Task<IEnumerable<Account>> GetNextBatchOfEmailsAsync(int batchSize);
 
         Task InsertAuditAsync(AccountNotificationAudit accountNotificationAudit);
-   }
+
+        Task<CircuitBreakerDetails> GetCircuitBreakerStatusAsync();
+    }
 }
