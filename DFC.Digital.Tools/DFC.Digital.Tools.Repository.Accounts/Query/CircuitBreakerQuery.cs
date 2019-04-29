@@ -1,4 +1,5 @@
 ﻿using DFC.Digital.Tools.Data.Interfaces;
+using DFC.Digital.Tools.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,19 +8,9 @@ using System.Text;
 
 namespace DFC.Digital.Tools.Repository.Accounts.Query
 {
-    public class CircuitBreakerQuery : IQueryRepository<CircuitBreaker>
+    public class CircuitBreakerQuery : ICircuitBreakerQueryRepository
     {
-        public IQueryable<CircuitBreaker> GetMany(Expression<Func<CircuitBreaker, bool>> where)
-        {
-            throw new NotImplementedException();
-        }
-
-        IQueryable<CircuitBreaker> IQueryRepository<CircuitBreaker>.GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        IQueryable<CircuitBreaker> IQueryRepository<CircuitBreaker>.GetMany(Expression<Func<CircuitBreaker, bool>> where)
+        public CircuitBreakerDetails GetBreakerDetails()
         {
             throw new NotImplementedException();
         }

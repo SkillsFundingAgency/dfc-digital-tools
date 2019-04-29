@@ -14,25 +14,31 @@ namespace DFC.Digital.Tools.Function.EmailNotification
         private readonly IApplicationLogger applicationLogger;
         private readonly ICircuitBreakerRepository circuitBreakerRepository;
         private readonly IConfigConfigurationProvider configuration;
+        private readonly IAccountsService accountsService;
 
         public EmailNotificationProcessor(
             ISendCitizenNotification<CitizenEmailNotification> sendCitizenNotificationService,
             ICitizenNotificationRepository<CitizenEmailNotification> citizenEmailRepository,
             IApplicationLogger applicationLogger,
             ICircuitBreakerRepository circuitBreakerRepository,
-            IConfigConfigurationProvider configuration)
+            IConfigConfigurationProvider configuration,
+            IAccountsService accountsService)
         {
             this.citizenEmailRepository = citizenEmailRepository;
             this.sendCitizenNotificationService = sendCitizenNotificationService;
             this.applicationLogger = applicationLogger;
             this.circuitBreakerRepository = circuitBreakerRepository;
             this.configuration = configuration;
+            this.accountsService = accountsService;
         }
 
         public async Task ProcessEmailNotificationsAsync()
         {
+            var emailbatch = accountsService.GetNextBatchOfEmailsAsync(150);
+
             var circuitBreaker = await circuitBreakerRepository.GetCircuitBreakerStatusAsync();
 
+            circuitBreaker.CircuitBreakerStatus = CircuitBreakerStatus.Open;
             if (circuitBreaker.CircuitBreakerStatus == CircuitBreakerStatus.Closed)
             {
                 var emailsToProcess = await citizenEmailRepository.GetCitizenEmailNotificationsAsync();

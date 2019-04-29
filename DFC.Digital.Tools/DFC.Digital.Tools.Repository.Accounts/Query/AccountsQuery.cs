@@ -21,13 +21,15 @@ namespace DFC.Digital.Tools.Repository.Accounts
         public IQueryable<Account> GetAccountsThatStillNeedProcessing()
         {
             var accounts = from u in accountsContext.Accounts
-                            join a in accountsContext.Audit on u.Mail equals a.Email
-                            where a.Email == null
-                            select new Account
-                            {
+                           join a in accountsContext.Audit
+                           on u.Mail equals a.Email into ua
+                           from a in ua.DefaultIfEmpty()
+                           where a == null
+                           select new Account
+                           {
                                 Name = u.Name,
                                 EMail = u.Mail
-                            };
+                           };
 
             return accounts;
         }
