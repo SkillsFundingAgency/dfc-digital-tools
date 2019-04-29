@@ -13,5 +13,15 @@ namespace DFC.Digital.Tools.Repository.Accounts.Query
         {
             throw new NotImplementedException();
         }
+
+        IQueryable<CircuitBreaker> IQueryRepository<CircuitBreaker>.GetAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        IQueryable<CircuitBreaker> IQueryRepository<CircuitBreaker>.GetMany(Expression<Func<CircuitBreaker, bool>> where)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
