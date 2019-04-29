@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DFC.Digital.Tools.Repository.Accounts
 {
-    public class AccountsQuery : IQueryRepository<Account>
+    public class AccountsQuery : IAccountQueryRepository
     {
         private readonly DFCUserAccountsContext accountsContext;
 
@@ -17,21 +18,18 @@ namespace DFC.Digital.Tools.Repository.Accounts
             this.accountsContext = accountsContext;
         }
 
-        public IQueryable<Account> GetAll()
+        public IQueryable<Account> GetAccountsThatStillNeedProcessing()
         {
-            var accounts = from account in accountsContext.Accounts
-               select new Account
-               {
-                 Name = account.Name,
-                 EMail = account.Mail
-               };
+            var accounts = from u in accountsContext.Accounts
+                            join a in accountsContext.Audit on u.Mail equals a.Email
+                            where a.Email == null
+                            select new Account
+                            {
+                                Name = u.Name,
+                                EMail = u.Mail
+                            };
 
             return accounts;
-        }
-
-        public IQueryable<Account> GetMany(Expression<Func<Account, bool>> where)
-        {
-            return GetAll().Where(where);
         }
     }
 }

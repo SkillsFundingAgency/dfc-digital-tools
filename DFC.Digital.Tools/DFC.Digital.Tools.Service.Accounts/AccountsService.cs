@@ -2,25 +2,36 @@
 using DFC.Digital.Tools.Data.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DFC.Digital.Tools.Service.Accounts
 {
     public class AccountsService : IAccountsService
     {
-        public AccountsService()
+        private readonly IApplicationLogger applicationLogger;
+        private readonly IConfigConfigurationProvider configuration;
+        private readonly IAccountQueryRepository accountQueryRepository;
+        private readonly IAuditCommandRepository auditCommandRepository;
+
+        public AccountsService(IApplicationLogger applicationLogger, IConfigConfigurationProvider configuration, IAccountQueryRepository accountQueryRepository, IAuditCommandRepository auditCommandRepository)
         {
+            this.applicationLogger = applicationLogger;
+            this.configuration = configuration;
+            this.accountQueryRepository = accountQueryRepository;
+            this.auditCommandRepository = auditCommandRepository;
         }
 
-        Task<IEnumerable<string>> IAccountsService.GetNextBatchOfEmails(int batchSize)
+        public async Task<IEnumerable<Account>> GetNextBatchOfEmailsAsync(int batchSize)
         {
-
-            throw new NotImplementedException();
+            var nextBatch = this.accountQueryRepository.GetAccountsThatStillNeedProcessing().Take(batchSize).ToList();
+            this.auditCommandRepository.SetBatchToProcessing(nextBatch);
+            return nextBatch;
         }
 
-        Task IAccountsService.InsertAudit(string email, NotificationProcessingStatus auditStatus, string note)
+        public async Task InsertAuditAsync(AccountNotificationAudit accountNotificationAudit)
         {
-            throw new NotImplementedException();
+           this.auditCommandRepository.Add(accountNotificationAudit);
         }
     }
 }
