@@ -18,7 +18,7 @@ namespace DFC.Digital.Tools.Function.EmailNotification
         public EmailNotificationProcessor(
             ISendCitizenNotification<CitizenEmailNotification> sendCitizenNotificationService,
             ICitizenNotificationRepository<CitizenEmailNotification> citizenEmailRepository,
-          IApplicationLogger applicationLogger,
+            IApplicationLogger applicationLogger,
             ICircuitBreakerRepository circuitBreakerRepository,
             IConfigConfigurationProvider configuration)
         {

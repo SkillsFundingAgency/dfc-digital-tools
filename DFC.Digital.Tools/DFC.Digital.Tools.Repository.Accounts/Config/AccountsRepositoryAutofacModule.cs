@@ -16,7 +16,7 @@ namespace DFC.Digital.Tools.Repository.Accounts
             {
                 var config = c.Resolve<IConfigConfigurationProvider>();
                 var opt = new DbContextOptionsBuilder<DFCUserAccountsContext>();
-                opt.UseSqlServer(config.GetConfigSectionKey<string>(Constants.SQLRepositorySection, Constants.SQLConnection));
+                opt.UseSqlServer(config.GetConfigSectionKey<string>(Constants.AccountRepositorySection, Constants.SQLConnection));
                 return new DFCUserAccountsContext(opt.Options);
             }).InstancePerLifetimeScope();
         }
