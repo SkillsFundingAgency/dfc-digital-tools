@@ -1,6 +1,9 @@
 ﻿using Autofac;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace DFC.Digital.Tools.Service.GovUkNotify
+namespace DFC.Digital.Tools.Service.Accounts
 {
     public class AccountsServiceAutofacModule : Module
     {

@@ -9,5 +9,8 @@
         public const string GovUkNotifyRetryCount = "DFC.Digital.Tools.GovUkNotifyRetryCount";
         public const string UnknownValue = "Unknown";
         public const string GovUkNotifyRateLimitException = "DFC.Tools.GovUkNotifyRateLimitException";
+        public const string SQLRepositorySection = "SQLServer";
+        public const string SQLConnection = "DFC.Digital.Tools.SQLConnection";
+
     }
 }

@@ -25,7 +25,7 @@ namespace DFC.Digital.Tools.Repository.Accounts
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("ConectionString");
+                optionsBuilder.UseSqlServer("DefaultConectionString");
             }
         }
 
