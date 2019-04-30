@@ -4,10 +4,12 @@ using DFC.Digital.Tools.Data.Interfaces;
 using DFC.Digital.Tools.Repository.Accounts;
 using DFC.Digital.Tools.Service.Accounts;
 using DFC.Digital.Tools.Service.GovUkNotify;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 namespace DFC.Digital.Tools.Function.EmailNotification
 {
+    [ExcludeFromCodeCoverage]
     public static class Startup
     {
         public static ILifetimeScope ConfigureContainer(RunMode mode)

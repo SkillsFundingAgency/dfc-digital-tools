@@ -34,13 +34,12 @@ namespace DFC.Digital.Tools.Function.EmailNotification
 
         public async Task ProcessEmailNotificationsAsync()
         {
-            var emailbatch = accountsService.GetNextBatchOfEmailsAsync(150);
-
             var circuitBreaker = await circuitBreakerRepository.GetCircuitBreakerStatusAsync();
 
-            circuitBreaker.CircuitBreakerStatus = CircuitBreakerStatus.Open;
-            if (circuitBreaker.CircuitBreakerStatus == CircuitBreakerStatus.Closed)
+            if (circuitBreaker.CircuitBreakerStatus != CircuitBreakerStatus.Open)
             {
+                var emailbatch = accountsService.GetNextBatchOfEmailsAsync(150);
+
                 var emailsToProcess = await citizenEmailRepository.GetCitizenEmailNotificationsAsync();
                 applicationLogger.Trace($"About to process email notifications with a batch size of {emailsToProcess.Count()}");
 
@@ -54,6 +53,7 @@ namespace DFC.Digital.Tools.Function.EmailNotification
 
                         if (serviceResponse.RateLimitException)
                         {
+                            await circuitBreakerRepository.OpenCircuitBreakerAsync();
                             applicationLogger.Info(
                                 $"RateLimit Exception thrown now resetting the unprocessed email notifications");
                             await citizenEmailRepository.ResetCitizenEmailNotificationAsync(
