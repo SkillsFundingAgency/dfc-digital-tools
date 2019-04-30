@@ -23,28 +23,36 @@ namespace DFC.Digital.Tools.Service.GovUkNotify
             this.circuitBreakerRepository = circuitBreakerRepository;
         }
 
-        public async Task<bool> SendCitizenNotificationAsync(CitizenEmailNotification notification)
+        public async Task<SendNotificationResponse> SendCitizenNotificationAsync(CitizenEmailNotification notification)
         {
+            var sendNotificationResponse = new SendNotificationResponse();
             try
             {
                 var response = clientProxy.SendEmail(
-                    configuration.GetConfigSectionKey<string>(Constants.GovUkNotifySection, Constants.GovUkNotifyApiKey),
+                    configuration.GetConfigSectionKey<string>(
+                        Constants.GovUkNotifySection,
+                        Constants.GovUkNotifyApiKey),
                     notification.EmailAddress,
-                    configuration.GetConfigSectionKey<string>(Constants.GovUkNotifySection, Constants.GovUkNotifyTemplateId),
+                    configuration.GetConfigSectionKey<string>(
+                        Constants.GovUkNotifySection,
+                        Constants.GovUkNotifyTemplateId),
                     this.Convert(notification.EmailPersonalisation));
-                return !string.IsNullOrEmpty(response?.id);
+                sendNotificationResponse.Success = !string.IsNullOrEmpty(response?.id);
             }
             catch (NotifyClientException ex)
             {
                 applicationLogger.Error("Failed to send citizen email with GovUKNotify", ex);
-                if (ex.Message.ToLowerInvariant().Contains(configuration.GetConfigSectionKey<string>(Constants.GovUkNotifySection, Constants.GovUkNotifyRateLimitException)))
+                if (ex.Message.ToLowerInvariant()
+                    .Contains(configuration.GetConfigSectionKey<string>(
+                        Constants.GovUkNotifySection,
+                        Constants.GovUkNotifyRateLimitException)))
                 {
-                     await circuitBreakerRepository.OpenCircuitBreakerAsync();
-                    throw new RateLimitException();
+                    sendNotificationResponse.RateLimitException = true;
+                    await circuitBreakerRepository.OpenCircuitBreakerAsync();
                 }
-
-               return false;
             }
+
+            return sendNotificationResponse;
         }
 
         public Dictionary<string, dynamic> Convert(GovUkNotifyPersonalisation govUkNotifyPersonalisation)

@@ -49,19 +49,25 @@ namespace DFC.Digital.Tools.Function.EmailNotification
                 {
                     try
                     {
-                        var sent = await sendCitizenNotificationService.SendCitizenNotificationAsync(email);
+                        var serviceResponse = await sendCitizenNotificationService.SendCitizenNotificationAsync(email);
 
-                        email.NotificationProcessingStatus = sent ? NotificationProcessingStatus.Completed : NotificationProcessingStatus.Failed;
-                        await citizenEmailRepository.UpdateCitizenEmailNotificationAsync(email);
-                    }
-                    catch (RateLimitException exception)
-                    {
-                            applicationLogger.Info($"RateLimit Exception  now resetting the unprocessed email notifications :- {exception.Message}");
+                        if (serviceResponse.RateLimitException)
+                        {
+                            applicationLogger.Info(
+                                $"RateLimit Exception thrown now resetting the unprocessed email notifications");
                             await citizenEmailRepository.ResetCitizenEmailNotificationAsync(
                                 emailsToProcess.Where(notification =>
                                     notification.NotificationProcessingStatus ==
                                     NotificationProcessingStatus.InProgress));
                             break;
+                        }
+                        else
+                        {
+                            email.NotificationProcessingStatus = serviceResponse.Success
+                                ? NotificationProcessingStatus.Completed
+                                : NotificationProcessingStatus.Failed;
+                            await citizenEmailRepository.UpdateCitizenEmailNotificationAsync(email);
+                        }
                     }
                     catch (Exception exception)
                     {

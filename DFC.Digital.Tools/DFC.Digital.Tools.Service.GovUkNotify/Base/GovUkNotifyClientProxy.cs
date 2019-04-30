@@ -1,9 +1,11 @@
 ﻿using Notify.Client;
 using Notify.Models.Responses;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DFC.Digital.Tools.Service.GovUkNotify
 {
+    [ExcludeFromCodeCoverage]
     public class GovUkNotifyClientProxy : IGovUkNotifyClientProxy
     {
         /// <summary>
