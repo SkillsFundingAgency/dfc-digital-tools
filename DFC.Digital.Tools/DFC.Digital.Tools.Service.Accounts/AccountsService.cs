@@ -14,24 +14,52 @@ namespace DFC.Digital.Tools.Service.Accounts
         private readonly IAccountQueryRepository accountQueryRepository;
         private readonly IAuditCommandRepository auditCommandRepository;
         private readonly ICircuitBreakerQueryRepository circuitBreakerQueryRepository;
+        private readonly ICircuitBreakerCommandRepository circuitBreakerCommandRepository;
 
         public AccountsService(
                                 IApplicationLogger applicationLogger,
                                 IConfigConfigurationProvider configuration,
                                 IAccountQueryRepository accountQueryRepository,
                                 IAuditCommandRepository auditCommandRepository,
-                                ICircuitBreakerQueryRepository circuitBreakerQueryRepository)
+                                ICircuitBreakerQueryRepository circuitBreakerQueryRepository,
+                                ICircuitBreakerCommandRepository circuitBreakerCommandRepository)
         {
             this.applicationLogger = applicationLogger;
             this.configuration = configuration;
             this.accountQueryRepository = accountQueryRepository;
             this.auditCommandRepository = auditCommandRepository;
             this.circuitBreakerQueryRepository = circuitBreakerQueryRepository;
+            this.circuitBreakerCommandRepository = circuitBreakerCommandRepository;
         }
 
         public async Task<CircuitBreakerDetails> GetCircuitBreakerStatusAsync()
         {
-            return this.circuitBreakerQueryRepository.GetBreakerDetails();
+            var circuitBreakerDetails = this.circuitBreakerQueryRepository.GetBreakerDetails();
+
+            if (circuitBreakerDetails == null)
+            {
+                 return this.AddDefaultCircuitBreaker();
+            }
+
+            return circuitBreakerDetails;
+        }
+
+        public async Task UpdateCircuitBreakerAsync(CircuitBreakerDetails circuitBreakerDetails)
+        {
+            var updated = this.circuitBreakerCommandRepository.UpdateIfExists(circuitBreakerDetails);
+            if (!updated)
+            {
+                this.AddDefaultCircuitBreaker();
+            }
+
+            this.circuitBreakerCommandRepository.UpdateIfExists(circuitBreakerDetails);
+        }
+
+        private CircuitBreakerDetails AddDefaultCircuitBreaker()
+        {
+            var initialCircuitBreaker = new CircuitBreakerDetails() { CircuitBreakerStatus = CircuitBreakerStatus.Closed, HalfOpenRetryCount = 0, LastCircuitOpenDate = DateTime.Now };
+            this.circuitBreakerCommandRepository.Add(initialCircuitBreaker);
+            return initialCircuitBreaker;
         }
 
         public async Task<IEnumerable<Account>> GetNextBatchOfEmailsAsync(int batchSize)

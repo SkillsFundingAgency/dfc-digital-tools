@@ -34,8 +34,7 @@ namespace DFC.Digital.Tools.Function.EmailNotification
 
         public async Task ProcessEmailNotificationsAsync()
         {
-            var emailbatch = accountsService.GetNextBatchOfEmailsAsync(150);
-
+            //var emailbatch = accountsService.GetNextBatchOfEmailsAsync(configuration.GetConfigSectionKey<int>(Constants.AccountRepositorySection, Constants.BatchSize));
             var circuitBreaker = await circuitBreakerRepository.GetCircuitBreakerStatusAsync();
 
             circuitBreaker.CircuitBreakerStatus = CircuitBreakerStatus.Open;
