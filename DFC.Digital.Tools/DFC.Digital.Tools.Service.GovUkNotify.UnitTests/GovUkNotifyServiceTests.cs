@@ -112,9 +112,9 @@ namespace DFC.Digital.Tools.Service.GovUkNotify.UnitTests
         public async Task SendCitizenNotificationAsyncTests(string responseId, bool throwException, bool isRateLimitException, SendNotificationResponse expectation)
         {
             //Fakes
-            var citizenEmailNotification = new CitizenEmailNotification
+            var citizenEmailNotification = new Account
             {
-                EmailAddress = "dumy@email.com"
+                EMail = "dumy@email.com"
             };
             var emailResponse = responseId == null ? null : new Notify.Models.Responses.EmailNotificationResponse
             {
@@ -139,7 +139,7 @@ namespace DFC.Digital.Tools.Service.GovUkNotify.UnitTests
 
             //Assertions
             result.Should().BeEquivalentTo(expectation);
-            A.CallTo(() => fakeGovUkNotifyClient.SendEmail(A<string>._, A<string>.That.IsEqualTo(citizenEmailNotification.EmailAddress), A<string>._, A<Dictionary<string, dynamic>>._)).MustHaveHappened();
+            A.CallTo(() => fakeGovUkNotifyClient.SendEmail(A<string>._, A<string>.That.IsEqualTo(citizenEmailNotification.EMail), A<string>._, A<Dictionary<string, dynamic>>._)).MustHaveHappened();
             if (throwException)
             {
                 A.CallTo(() => fakeApplicationLogger.Error(A<string>._, A<Exception>._)).MustHaveHappened();

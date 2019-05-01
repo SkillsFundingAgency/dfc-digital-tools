@@ -9,5 +9,7 @@ namespace DFC.Digital.Tools.Data.Models
         public string Name { get; set; }
 
         public string EMail { get; set; }
+
+        public bool Processed { get; set; }
     }
 }

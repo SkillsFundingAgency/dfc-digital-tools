@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DFC.Digital.Tools.Service.GovUkNotify
 {
-    public class GovUkNotifyService : ISendCitizenNotification<CitizenEmailNotification>
+    public class GovUkNotifyService : ISendCitizenNotification<Account>
     {
         private readonly IApplicationLogger applicationLogger;
         private readonly IGovUkNotifyClientProxy clientProxy;
@@ -23,7 +23,7 @@ namespace DFC.Digital.Tools.Service.GovUkNotify
             this.circuitBreakerRepository = circuitBreakerRepository;
         }
 
-        public async Task<SendNotificationResponse> SendCitizenNotificationAsync(CitizenEmailNotification notification)
+        public async Task<SendNotificationResponse> SendCitizenNotificationAsync(Account notification)
         {
             var sendNotificationResponse = new SendNotificationResponse();
             try
@@ -32,11 +32,11 @@ namespace DFC.Digital.Tools.Service.GovUkNotify
                     configuration.GetConfigSectionKey<string>(
                         Constants.GovUkNotifySection,
                         Constants.GovUkNotifyApiKey),
-                    notification.EmailAddress,
+                    notification.EMail,
                     configuration.GetConfigSectionKey<string>(
                         Constants.GovUkNotifySection,
                         Constants.GovUkNotifyTemplateId),
-                    this.Convert(notification.EmailPersonalisation));
+                    Convert(GetGovUkNotifyPersonalisation(notification)));
                 sendNotificationResponse.Success = !string.IsNullOrEmpty(response?.id);
             }
             catch (NotifyClientException ex)
@@ -74,6 +74,13 @@ namespace DFC.Digital.Tools.Service.GovUkNotify
             }
 
             return null;
+        }
+
+        private GovUkNotifyPersonalisation GetGovUkNotifyPersonalisation(Account account)
+        {
+           var result = new GovUkNotifyPersonalisation();
+           result.Personalisation.Add(nameof(Account.Name), account.Name);
+           return result;
         }
     }
 }

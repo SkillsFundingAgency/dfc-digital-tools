@@ -9,7 +9,7 @@ namespace DFC.Digital.Tools.Function.EmailNotification
 {
     public class EmailNotificationProcessor : IProcessEmailNotifications
     {
-        private readonly ISendCitizenNotification<CitizenEmailNotification> sendCitizenNotificationService;
+        private readonly ISendCitizenNotification<Account> sendCitizenNotificationService;
         private readonly ICitizenNotificationRepository<CitizenEmailNotification> citizenEmailRepository;
         private readonly IApplicationLogger applicationLogger;
         private readonly ICircuitBreakerRepository circuitBreakerRepository;
@@ -17,7 +17,7 @@ namespace DFC.Digital.Tools.Function.EmailNotification
         private readonly IAccountsService accountsService;
 
         public EmailNotificationProcessor(
-            ISendCitizenNotification<CitizenEmailNotification> sendCitizenNotificationService,
+            ISendCitizenNotification<Account> sendCitizenNotificationService,
             ICitizenNotificationRepository<CitizenEmailNotification> citizenEmailRepository,
             IApplicationLogger applicationLogger,
             ICircuitBreakerRepository circuitBreakerRepository,
@@ -38,9 +38,10 @@ namespace DFC.Digital.Tools.Function.EmailNotification
 
             if (circuitBreaker.CircuitBreakerStatus != CircuitBreakerStatus.Open)
             {
-                var emailbatch = accountsService.GetNextBatchOfEmailsAsync(150);
+                var emailBatch = await accountsService.GetNextBatchOfEmailsAsync(150);
 
-                var emailsToProcess = await citizenEmailRepository.GetCitizenEmailNotificationsAsync();
+                // var emailsToProcess = await citizenEmailRepository.GetCitizenEmailNotificationsAsync();
+                var emailsToProcess = emailBatch.ToList();
                 applicationLogger.Trace($"About to process email notifications with a batch size of {emailsToProcess.Count()}");
 
                 var halfOpenCountAllowed = configuration.GetConfigSectionKey<int>(Constants.GovUkNotifySection, Constants.GovUkNotifyRetryCount);
@@ -56,19 +57,21 @@ namespace DFC.Digital.Tools.Function.EmailNotification
                             await circuitBreakerRepository.OpenCircuitBreakerAsync();
                             applicationLogger.Info(
                                 $"RateLimit Exception thrown now resetting the unprocessed email notifications");
-                            await citizenEmailRepository.ResetCitizenEmailNotificationAsync(
-                                emailsToProcess.Where(notification =>
-                                    notification.NotificationProcessingStatus ==
-                                    NotificationProcessingStatus.InProgress));
+
+                            //await citizenEmailRepository.ResetCitizenEmailNotificationAsync(
+                            //    emailsToProcess.Where(notification =>
+                            //        notification.NotificationProcessingStatus ==
+                            //        NotificationProcessingStatus.InProgress));
                             break;
                         }
-                        else
+
+                        await accountsService.InsertAuditAsync(new AccountNotificationAudit
                         {
-                            email.NotificationProcessingStatus = serviceResponse.Success
+                            Email = email.EMail,
+                            NotificationProcessingStatus = serviceResponse.Success
                                 ? NotificationProcessingStatus.Completed
-                                : NotificationProcessingStatus.Failed;
-                            await citizenEmailRepository.UpdateCitizenEmailNotificationAsync(email);
-                        }
+                                : NotificationProcessingStatus.Failed
+                        });
                     }
                     catch (Exception exception)
                     {
@@ -79,10 +82,11 @@ namespace DFC.Digital.Tools.Function.EmailNotification
                             circuitBreaker.HalfOpenRetryCount == halfOpenCountAllowed)
                         {
                             await circuitBreakerRepository.OpenCircuitBreakerAsync();
-                            await citizenEmailRepository.ResetCitizenEmailNotificationAsync(
-                                emailsToProcess.Where(notification =>
-                                    notification.NotificationProcessingStatus ==
-                                    NotificationProcessingStatus.InProgress));
+
+                            //await citizenEmailRepository.ResetCitizenEmailNotificationAsync(
+                            //    emailsToProcess.Where(notification =>
+                            //        notification.NotificationProcessingStatus ==
+                            //        NotificationProcessingStatus.InProgress));
                             break;
                         }
                     }

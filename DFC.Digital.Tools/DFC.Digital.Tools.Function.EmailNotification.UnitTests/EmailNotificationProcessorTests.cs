@@ -54,7 +54,7 @@ namespace DFC.Digital.Tools.Function.EmailNotification.UnitTests
                 RateLimitException = true,
             };
 
-        private readonly ISendCitizenNotification<CitizenEmailNotification> fakeSendCitizenNotificationService;
+        private readonly ISendCitizenNotification<Account> fakeSendCitizenNotificationService;
         private readonly ICitizenNotificationRepository<CitizenEmailNotification> fakeCitizenEmailRepository;
         private readonly IApplicationLogger fakeApplicationLogger;
         private readonly ICircuitBreakerRepository fakeCircuitBreakerRepository;
@@ -67,7 +67,7 @@ namespace DFC.Digital.Tools.Function.EmailNotification.UnitTests
             fakeAccountsService = A.Fake<IAccountsService>(ops => ops.Strict());
             fakeApplicationLogger = A.Fake<IApplicationLogger>(ops => ops.Strict());
             fakeSendCitizenNotificationService =
-                A.Fake<ISendCitizenNotification<CitizenEmailNotification>>(ops => ops.Strict());
+                A.Fake<ISendCitizenNotification<Account>>(ops => ops.Strict());
             fakeConfiguration = A.Fake<IConfigConfigurationProvider>(ops => ops.Strict());
             fakeCitizenEmailRepository =
                 A.Fake<ICitizenNotificationRepository<CitizenEmailNotification>>(ops => ops.Strict());
@@ -150,11 +150,11 @@ namespace DFC.Digital.Tools.Function.EmailNotification.UnitTests
             A.CallTo(() => fakeCitizenEmailRepository.GetCitizenEmailNotificationsAsync()).Returns(GetEmailNotifications(batchAccountSize));
             if (throwSendNotificationException)
             {
-                A.CallTo(() => fakeSendCitizenNotificationService.SendCitizenNotificationAsync(A<CitizenEmailNotification>._)).Throws<Exception>();
+                A.CallTo(() => fakeSendCitizenNotificationService.SendCitizenNotificationAsync(A<Account>._)).Throws<Exception>();
             }
             else
             {
-                A.CallTo(() => fakeSendCitizenNotificationService.SendCitizenNotificationAsync(A<CitizenEmailNotification>._)).Returns(sendNotificationResponse);
+                A.CallTo(() => fakeSendCitizenNotificationService.SendCitizenNotificationAsync(A<Account>._)).Returns(sendNotificationResponse);
             }
 
             A.CallTo(() => fakeConfiguration.GetConfigSectionKey<int>(A<string>._, A<string>._))
@@ -213,7 +213,7 @@ namespace DFC.Digital.Tools.Function.EmailNotification.UnitTests
             {
                 A.CallTo(() => fakeAccountsService.GetNextBatchOfEmailsAsync(A<int>._)).MustNotHaveHappened();
                 A.CallTo(() => fakeCitizenEmailRepository.GetCitizenEmailNotificationsAsync()).MustNotHaveHappened();
-                A.CallTo(() => fakeSendCitizenNotificationService.SendCitizenNotificationAsync(A<CitizenEmailNotification>._)).MustNotHaveHappened();
+                A.CallTo(() => fakeSendCitizenNotificationService.SendCitizenNotificationAsync(A<Account>._)).MustNotHaveHappened();
             }
         }
 
