@@ -1,4 +1,5 @@
-﻿using DFC.Digital.Tools.Data.Interfaces;
+﻿using DFC.Digital.Tools.Core;
+using DFC.Digital.Tools.Data.Interfaces;
 using DFC.Digital.Tools.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -64,7 +65,7 @@ namespace DFC.Digital.Tools.Service.Accounts
 
         public async Task<IEnumerable<Account>> GetNextBatchOfEmailsAsync(int batchSize)
         {
-            var nextBatch = this.accountQueryRepository.GetAccountsThatStillNeedProcessing().Take(batchSize).ToList();
+            var nextBatch = this.accountQueryRepository.GetAccountsThatStillNeedProcessing(this.configuration.GetConfigSectionKey<DateTime>(Constants.AccountRepositorySection, Constants.CutOffDate)).Take(batchSize).ToList();
             this.auditCommandRepository.SetBatchToProcessing(nextBatch);
             return nextBatch;
         }

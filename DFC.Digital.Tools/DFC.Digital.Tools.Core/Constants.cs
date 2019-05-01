@@ -12,5 +12,6 @@
         public const string AccountRepositorySection = "AccountRepository";
         public const string SQLConnection = "DFC.Digital.Tools.SQLConnection";
         public const string BatchSize = "DFC.Digital.Tools.BatchSize";
+        public const string CutOffDate = "DFC.Digital.Tools.CutOffDate";
     }
 }

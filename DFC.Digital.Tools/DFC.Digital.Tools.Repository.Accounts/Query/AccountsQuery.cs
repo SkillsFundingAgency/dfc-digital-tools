@@ -18,13 +18,13 @@ namespace DFC.Digital.Tools.Repository.Accounts
             this.accountsContext = accountsContext;
         }
 
-        public IQueryable<Account> GetAccountsThatStillNeedProcessing()
+        public IQueryable<Account> GetAccountsThatStillNeedProcessing(DateTime cutOffDate)
         {
             var accounts = from u in accountsContext.Accounts
                            join a in accountsContext.Audit
                            on u.Mail equals a.Email into ua
                            from a in ua.DefaultIfEmpty()
-                           where a == null
+                           where a == null && u.Createtimestamp < cutOffDate
                            select new Account
                            {
                                 Name = u.Name,
