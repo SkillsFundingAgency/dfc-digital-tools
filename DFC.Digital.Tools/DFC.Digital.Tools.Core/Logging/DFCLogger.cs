@@ -29,6 +29,11 @@ namespace DFC.Digital.Tools.Core
             }
         }
 
+        public void ErrorJustLogIt(string message, Exception ex)
+        {
+            logService.Log(LogLevel.Error, ex, message);
+        }
+
         public void Info(string message)
         {
             logService.Info(message);

@@ -73,6 +73,33 @@ namespace DFC.Digital.Tools.Service.Accounts
             this.auditCommandRepository.SetBatchToCircuitGotBroken(accounts.ToList());
         }
 
+        public async Task OpenCircuitBreakerAsync()
+        {
+            await this.UpdateCircuitBreakerAsync(new CircuitBreakerDetails
+            {
+                CircuitBreakerStatus = CircuitBreakerStatus.Open,
+                LastCircuitOpenDate = DateTime.Now
+            });
+        }
+
+        public async Task HalfOpenCircuitBreakerAsync()
+        {
+            var currentCircuitBreaker = await this.GetCircuitBreakerStatusAsync();
+            if (currentCircuitBreaker?.CircuitBreakerStatus == CircuitBreakerStatus.HalfOpen)
+            {
+                currentCircuitBreaker.HalfOpenRetryCount = currentCircuitBreaker.HalfOpenRetryCount + 1;
+                await this.UpdateCircuitBreakerAsync(currentCircuitBreaker);
+            }
+            else
+            {
+                await this.UpdateCircuitBreakerAsync(new CircuitBreakerDetails
+                {
+                    CircuitBreakerStatus = CircuitBreakerStatus.HalfOpen,
+                    LastCircuitOpenDate = DateTime.Now
+                });
+            }
+        }
+
         private CircuitBreakerDetails AddDefaultCircuitBreaker()
         {
             var initialCircuitBreaker = new CircuitBreakerDetails() { CircuitBreakerStatus = CircuitBreakerStatus.Closed, HalfOpenRetryCount = 0, LastCircuitOpenDate = DateTime.Now };

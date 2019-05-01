@@ -13,14 +13,14 @@ namespace DFC.Digital.Tools.Service.GovUkNotify
         private readonly IApplicationLogger applicationLogger;
         private readonly IGovUkNotifyClientProxy clientProxy;
         private readonly IConfigConfigurationProvider configuration;
-        private readonly ICircuitBreakerRepository circuitBreakerRepository;
+        private readonly IAccountsService accountsService;
 
-        public GovUkNotifyService(IApplicationLogger applicationLogger, IGovUkNotifyClientProxy clientProxy, IConfigConfigurationProvider configuration, ICircuitBreakerRepository circuitBreakerRepository)
+        public GovUkNotifyService(IApplicationLogger applicationLogger, IGovUkNotifyClientProxy clientProxy, IConfigConfigurationProvider configuration, IAccountsService accountsService)
         {
             this.applicationLogger = applicationLogger;
             this.clientProxy = clientProxy;
             this.configuration = configuration;
-            this.circuitBreakerRepository = circuitBreakerRepository;
+            this.accountsService = accountsService;
         }
 
         public async Task<SendNotificationResponse> SendCitizenNotificationAsync(Account notification)
@@ -41,15 +41,16 @@ namespace DFC.Digital.Tools.Service.GovUkNotify
             }
             catch (NotifyClientException ex)
             {
-                applicationLogger.Error("Failed to send citizen email with GovUKNotify", ex);
                 if (ex.Message.ToLowerInvariant()
                     .Contains(configuration.GetConfigSectionKey<string>(
                         Constants.GovUkNotifySection,
                         Constants.GovUkNotifyRateLimitException)))
                 {
                     sendNotificationResponse.RateLimitException = true;
-                    await circuitBreakerRepository.OpenCircuitBreakerAsync();
+                    await accountsService.OpenCircuitBreakerAsync();
                 }
+
+                applicationLogger.Error("Failed to send citizen email with GovUKNotify", ex);
             }
 
             return sendNotificationResponse;

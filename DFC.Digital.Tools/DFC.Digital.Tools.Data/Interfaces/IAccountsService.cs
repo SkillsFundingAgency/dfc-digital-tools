@@ -15,5 +15,9 @@ namespace DFC.Digital.Tools.Data.Interfaces
         Task<CircuitBreakerDetails> GetCircuitBreakerStatusAsync();
 
         Task SetBatchToCircuitGotBrokenAsync(IEnumerable<Account> accounts);
+
+        Task OpenCircuitBreakerAsync();
+
+        Task HalfOpenCircuitBreakerAsync();
     }
 }

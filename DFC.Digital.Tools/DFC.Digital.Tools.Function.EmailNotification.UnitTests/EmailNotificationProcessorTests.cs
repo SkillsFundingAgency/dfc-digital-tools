@@ -3,7 +3,6 @@ using DFC.Digital.Tools.Data.Models;
 using FakeItEasy;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -55,22 +54,17 @@ namespace DFC.Digital.Tools.Function.EmailNotification.UnitTests
             };
 
         private readonly ISendCitizenNotification<Account> fakeSendCitizenNotificationService;
-        private readonly ICitizenNotificationRepository<CitizenEmailNotification> fakeCitizenEmailRepository;
         private readonly IApplicationLogger fakeApplicationLogger;
-        private readonly ICircuitBreakerRepository fakeCircuitBreakerRepository;
         private readonly IConfigConfigurationProvider fakeConfiguration;
         private readonly IAccountsService fakeAccountsService;
 
         public EmailNotificationProcessorTests()
         {
-            fakeCircuitBreakerRepository = A.Fake<ICircuitBreakerRepository>(ops => ops.Strict());
             fakeAccountsService = A.Fake<IAccountsService>(ops => ops.Strict());
             fakeApplicationLogger = A.Fake<IApplicationLogger>(ops => ops.Strict());
             fakeSendCitizenNotificationService =
                 A.Fake<ISendCitizenNotification<Account>>(ops => ops.Strict());
             fakeConfiguration = A.Fake<IConfigConfigurationProvider>(ops => ops.Strict());
-            fakeCitizenEmailRepository =
-                A.Fake<ICitizenNotificationRepository<CitizenEmailNotification>>(ops => ops.Strict());
             SetupCalls();
         }
 
@@ -145,9 +139,8 @@ namespace DFC.Digital.Tools.Function.EmailNotification.UnitTests
             int halfOpenRetryMax = 5)
         {
             // Configure Calls
-            A.CallTo(() => fakeCircuitBreakerRepository.GetCircuitBreakerStatusAsync()).Returns(circuitBreakerDetails);
+            A.CallTo(() => fakeAccountsService.GetCircuitBreakerStatusAsync()).Returns(circuitBreakerDetails);
             A.CallTo(() => fakeAccountsService.GetNextBatchOfEmailsAsync(A<int>._)).Returns(GetAccountsToProcess(batchAccountSize));
-            A.CallTo(() => fakeCitizenEmailRepository.GetCitizenEmailNotificationsAsync()).Returns(GetEmailNotifications(batchAccountSize));
             if (throwSendNotificationException)
             {
                 A.CallTo(() => fakeSendCitizenNotificationService.SendCitizenNotificationAsync(A<Account>._)).Throws<Exception>();
@@ -161,24 +154,24 @@ namespace DFC.Digital.Tools.Function.EmailNotification.UnitTests
                 .Returns(halfOpenRetryMax);
 
             // Assign
-            var emailProcessor = new EmailNotificationProcessor(fakeSendCitizenNotificationService, fakeCitizenEmailRepository, fakeApplicationLogger, fakeCircuitBreakerRepository, fakeConfiguration, fakeAccountsService);
+            var emailProcessor = new EmailNotificationProcessor(fakeSendCitizenNotificationService, fakeApplicationLogger, fakeConfiguration, fakeAccountsService);
 
             // Act
              await emailProcessor.ProcessEmailNotificationsAsync();
 
             // Assert
-            A.CallTo(() => fakeCircuitBreakerRepository.GetCircuitBreakerStatusAsync()).MustHaveHappened();
+            A.CallTo(() => fakeAccountsService.GetCircuitBreakerStatusAsync()).MustHaveHappened();
 
             if (circuitBreakerDetails.CircuitBreakerStatus != CircuitBreakerStatus.Open)
             {
                 if (throwSendNotificationException)
                 {
-                    A.CallTo(() => fakeCircuitBreakerRepository.HalfOpenCircuitBreakerAsync()).MustHaveHappened();
+                    A.CallTo(() => fakeAccountsService.HalfOpenCircuitBreakerAsync()).MustHaveHappened();
                     if (circuitBreakerDetails.HalfOpenRetryCount == halfOpenRetryMax)
                     {
-                        A.CallTo(() => fakeCitizenEmailRepository.ResetCitizenEmailNotificationAsync(A<IQueryable<CitizenEmailNotification>>._)).MustHaveHappened();
+                        A.CallTo(() => fakeAccountsService.SetBatchToCircuitGotBrokenAsync(A<IEnumerable<Account>>._)).MustHaveHappened();
 
-                        A.CallTo(() => fakeCircuitBreakerRepository.OpenCircuitBreakerAsync()).MustHaveHappened();
+                        A.CallTo(() => fakeAccountsService.OpenCircuitBreakerAsync()).MustHaveHappened();
                     }
                 }
                 else
@@ -186,25 +179,23 @@ namespace DFC.Digital.Tools.Function.EmailNotification.UnitTests
                     if (sendNotificationResponse.Success)
                     {
                         A.CallTo(() =>
-                            fakeCitizenEmailRepository.UpdateCitizenEmailNotificationAsync(
-                                A<CitizenEmailNotification>._)).MustHaveHappened(batchAccountSize, Times.Exactly);
+                            fakeAccountsService.InsertAuditAsync(A<AccountNotificationAudit>._)).MustHaveHappened(batchAccountSize, Times.Exactly);
                     }
                     else
                     {
                         if (sendNotificationResponse.RateLimitException)
                         {
-                            A.CallTo(() => fakeCircuitBreakerRepository.OpenCircuitBreakerAsync()).MustHaveHappened();
+                            A.CallTo(() => fakeAccountsService.OpenCircuitBreakerAsync()).MustHaveHappened();
                             A.CallTo(() =>
-                                    fakeCitizenEmailRepository.ResetCitizenEmailNotificationAsync(
-                                        A<IQueryable<CitizenEmailNotification>>._))
+                                    fakeAccountsService.SetBatchToCircuitGotBrokenAsync(
+                                        A<IEnumerable<Account>>._))
                                 .MustHaveHappened();
                             A.CallTo(() => fakeApplicationLogger.Info(A<string>._)).MustHaveHappened();
                         }
                         else
                         {
                             A.CallTo(() =>
-                                fakeCitizenEmailRepository.UpdateCitizenEmailNotificationAsync(
-                                    A<CitizenEmailNotification>._)).MustHaveHappened();
+                                fakeAccountsService.InsertAuditAsync(A<AccountNotificationAudit>._)).MustHaveHappened();
                         }
                     }
                 }
@@ -212,7 +203,6 @@ namespace DFC.Digital.Tools.Function.EmailNotification.UnitTests
             else
             {
                 A.CallTo(() => fakeAccountsService.GetNextBatchOfEmailsAsync(A<int>._)).MustNotHaveHappened();
-                A.CallTo(() => fakeCitizenEmailRepository.GetCitizenEmailNotificationsAsync()).MustNotHaveHappened();
                 A.CallTo(() => fakeSendCitizenNotificationService.SendCitizenNotificationAsync(A<Account>._)).MustNotHaveHappened();
             }
         }
@@ -232,29 +222,15 @@ namespace DFC.Digital.Tools.Function.EmailNotification.UnitTests
             return accountList;
         }
 
-        private static IQueryable<CitizenEmailNotification> GetEmailNotifications(int batchSize)
-        {
-            var accountList = new List<CitizenEmailNotification>();
-            for (var i = 0; i < batchSize; i++)
-            {
-                accountList.Add(new CitizenEmailNotification
-                {
-                    EmailAddress = $"{nameof(CitizenEmailNotification.EmailAddress)} - {i}"
-                });
-            }
-
-            return accountList.AsQueryable();
-        }
-
         private void SetupCalls()
         {
             A.CallTo(() => fakeApplicationLogger.Info(A<string>._)).DoesNothing();
-            A.CallTo(() => fakeApplicationLogger.Error(A<string>._, A<Exception>._)).DoesNothing();
+            A.CallTo(() => fakeApplicationLogger.ErrorJustLogIt(A<string>._, A<Exception>._)).DoesNothing();
             A.CallTo(() => fakeApplicationLogger.Trace(A<string>._)).DoesNothing();
-            A.CallTo(() => fakeCircuitBreakerRepository.OpenCircuitBreakerAsync()).Returns(Task.CompletedTask);
-            A.CallTo(() => fakeCircuitBreakerRepository.HalfOpenCircuitBreakerAsync()).Returns(Task.CompletedTask);
-            A.CallTo(() => fakeCitizenEmailRepository.UpdateCitizenEmailNotificationAsync(A<CitizenEmailNotification>._)).Returns(Task.CompletedTask);
-            A.CallTo(() => fakeCitizenEmailRepository.ResetCitizenEmailNotificationAsync(A<IQueryable<CitizenEmailNotification>>._)).Returns(Task.CompletedTask);
+            A.CallTo(() => fakeAccountsService.OpenCircuitBreakerAsync()).Returns(Task.CompletedTask);
+            A.CallTo(() => fakeAccountsService.HalfOpenCircuitBreakerAsync()).Returns(Task.CompletedTask);
+            A.CallTo(() => fakeAccountsService.InsertAuditAsync(A<AccountNotificationAudit>._)).Returns(Task.CompletedTask);
+            A.CallTo(() => fakeAccountsService.SetBatchToCircuitGotBrokenAsync(A<IEnumerable<Account>>._)).Returns(Task.CompletedTask);
         }
     }
 }

@@ -10,6 +10,8 @@ namespace DFC.Digital.Tools.Data.Interfaces
 
         void Warn(string message, Exception ex);
 
+        void ErrorJustLogIt(string message, Exception ex);
+
         void Error(string message, Exception ex);
     }
 }

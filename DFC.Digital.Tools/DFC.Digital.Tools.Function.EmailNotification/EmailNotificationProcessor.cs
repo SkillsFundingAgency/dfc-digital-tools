@@ -10,89 +10,93 @@ namespace DFC.Digital.Tools.Function.EmailNotification
     public class EmailNotificationProcessor : IProcessEmailNotifications
     {
         private readonly ISendCitizenNotification<Account> sendCitizenNotificationService;
-        private readonly ICitizenNotificationRepository<CitizenEmailNotification> citizenEmailRepository;
         private readonly IApplicationLogger applicationLogger;
-        private readonly ICircuitBreakerRepository circuitBreakerRepository;
         private readonly IConfigConfigurationProvider configuration;
         private readonly IAccountsService accountsService;
 
         public EmailNotificationProcessor(
             ISendCitizenNotification<Account> sendCitizenNotificationService,
-            ICitizenNotificationRepository<CitizenEmailNotification> citizenEmailRepository,
             IApplicationLogger applicationLogger,
-            ICircuitBreakerRepository circuitBreakerRepository,
             IConfigConfigurationProvider configuration,
             IAccountsService accountsService)
         {
-            this.citizenEmailRepository = citizenEmailRepository;
             this.sendCitizenNotificationService = sendCitizenNotificationService;
             this.applicationLogger = applicationLogger;
-            this.circuitBreakerRepository = circuitBreakerRepository;
             this.configuration = configuration;
             this.accountsService = accountsService;
         }
 
         public async Task ProcessEmailNotificationsAsync()
         {
-            var circuitBreaker = await circuitBreakerRepository.GetCircuitBreakerStatusAsync();
+            var circuitBreaker = await accountsService.GetCircuitBreakerStatusAsync();
 
             if (circuitBreaker.CircuitBreakerStatus != CircuitBreakerStatus.Open)
             {
-                var emailBatch = await accountsService.GetNextBatchOfEmailsAsync(150);
+                var batchSize = configuration.GetConfigSectionKey<int>(Constants.AccountRepositorySection, Constants.BatchSize);
 
-                // var emailsToProcess = await citizenEmailRepository.GetCitizenEmailNotificationsAsync();
-                var emailsToProcess = emailBatch.ToList();
-                applicationLogger.Trace($"About to process email notifications with a batch size of {emailsToProcess.Count()}");
+                var emailBatch = await accountsService.GetNextBatchOfEmailsAsync(batchSize);
+
+                var accountsToProcess = emailBatch.ToList();
+                applicationLogger.Trace($"About to process email notifications with a batch size of {accountsToProcess.Count}");
 
                 var halfOpenCountAllowed = configuration.GetConfigSectionKey<int>(Constants.GovUkNotifySection, Constants.GovUkNotifyRetryCount);
 
-                foreach (var email in emailsToProcess)
+                foreach (var account in accountsToProcess)
                 {
                     try
                     {
-                        var serviceResponse = await sendCitizenNotificationService.SendCitizenNotificationAsync(email);
+                        var serviceResponse = await sendCitizenNotificationService.SendCitizenNotificationAsync(account);
 
                         if (serviceResponse.RateLimitException)
                         {
-                            await circuitBreakerRepository.OpenCircuitBreakerAsync();
+                            await accountsService.OpenCircuitBreakerAsync();
                             applicationLogger.Info(
                                 $"RateLimit Exception thrown now resetting the unprocessed email notifications");
 
-                            //await citizenEmailRepository.ResetCitizenEmailNotificationAsync(
-                            //    emailsToProcess.Where(notification =>
-                            //        notification.NotificationProcessingStatus ==
-                            //        NotificationProcessingStatus.InProgress));
+                            await accountsService.SetBatchToCircuitGotBrokenAsync(
+                                accountsToProcess.Where(notification => !notification.Processed));
                             break;
                         }
 
                         await accountsService.InsertAuditAsync(new AccountNotificationAudit
                         {
-                            Email = email.EMail,
+                            Email = account.EMail,
                             NotificationProcessingStatus = serviceResponse.Success
                                 ? NotificationProcessingStatus.Completed
                                 : NotificationProcessingStatus.Failed
                         });
+
+                        account.Processed = true;
                     }
                     catch (Exception exception)
                     {
-                        await circuitBreakerRepository.HalfOpenCircuitBreakerAsync();
-                        applicationLogger.Error("Exception whilst sending email notification", exception);
-                        circuitBreaker = await circuitBreakerRepository.GetCircuitBreakerStatusAsync();
+                        await accountsService.InsertAuditAsync(new AccountNotificationAudit
+                        {
+                            Email = account.EMail,
+                            NotificationProcessingStatus = NotificationProcessingStatus.CircuitGotBroken,
+                            Note = exception.InnerException?.Message
+                        });
+
+                        await accountsService.HalfOpenCircuitBreakerAsync();
+                        applicationLogger.ErrorJustLogIt("Exception whilst sending email notification", exception);
+                        circuitBreaker = await accountsService.GetCircuitBreakerStatusAsync();
                         if (circuitBreaker.CircuitBreakerStatus == CircuitBreakerStatus.HalfOpen &&
                             circuitBreaker.HalfOpenRetryCount == halfOpenCountAllowed)
                         {
-                            await circuitBreakerRepository.OpenCircuitBreakerAsync();
+                            await accountsService.OpenCircuitBreakerAsync();
 
-                            //await citizenEmailRepository.ResetCitizenEmailNotificationAsync(
-                            //    emailsToProcess.Where(notification =>
-                            //        notification.NotificationProcessingStatus ==
-                            //        NotificationProcessingStatus.InProgress));
+                            await accountsService.SetBatchToCircuitGotBrokenAsync(
+                                accountsToProcess.Where(notification => !notification.Processed));
                             break;
                         }
                     }
                 }
 
-                applicationLogger.Trace("Completed processing all email notifications from the recycle bin");
+                applicationLogger.Trace("Completed processing all accounts in the batch");
+            }
+            else
+            {
+                applicationLogger.Info("Circuit is open so no account processed");
             }
         }
     }

@@ -36,14 +36,14 @@ namespace DFC.Digital.Tools.Service.GovUkNotify.UnitTests
         private readonly IApplicationLogger fakeApplicationLogger;
         private readonly IGovUkNotifyClientProxy fakeGovUkNotifyClient;
         private readonly IConfigConfigurationProvider fakeConfiguration;
-        private readonly ICircuitBreakerRepository fakeCircuitBreakerRepository;
+        private readonly IAccountsService fakeAccountsService;
 
     public GovUkNotifyServiceTests()
         {
             fakeApplicationLogger = A.Fake<IApplicationLogger>(ops => ops.Strict());
             fakeConfiguration = A.Fake<IConfigConfigurationProvider>(ops => ops.Strict());
             fakeGovUkNotifyClient = A.Fake<IGovUkNotifyClientProxy>(ops => ops.Strict());
-            fakeCircuitBreakerRepository = A.Fake<ICircuitBreakerRepository>(ops => ops.Strict());
+            fakeAccountsService = A.Fake<IAccountsService>(ops => ops.Strict());
             SetupCalls();
         }
 
@@ -100,7 +100,7 @@ namespace DFC.Digital.Tools.Service.GovUkNotify.UnitTests
             };
 
             // Act
-            var govUkNotifyService = new GovUkNotifyService(fakeApplicationLogger, fakeGovUkNotifyClient, fakeConfiguration, fakeCircuitBreakerRepository);
+            var govUkNotifyService = new GovUkNotifyService(fakeApplicationLogger, fakeGovUkNotifyClient, fakeConfiguration, fakeAccountsService);
             var result = govUkNotifyService.Convert(input);
 
             // Assert
@@ -134,7 +134,7 @@ namespace DFC.Digital.Tools.Service.GovUkNotify.UnitTests
             A.CallTo(() => fakeConfiguration.GetConfigSectionKey<string>(A<string>._, A<string>._)).Returns(isRateLimitException ? nameof(NotifyClientException).ToLowerInvariant() : "test");
 
             //Act
-            var govUkNotifyService = new GovUkNotifyService(fakeApplicationLogger, fakeGovUkNotifyClient, fakeConfiguration, fakeCircuitBreakerRepository);
+            var govUkNotifyService = new GovUkNotifyService(fakeApplicationLogger, fakeGovUkNotifyClient, fakeConfiguration, fakeAccountsService);
             var result = await govUkNotifyService.SendCitizenNotificationAsync(citizenEmailNotification);
 
             //Assertions
@@ -145,7 +145,7 @@ namespace DFC.Digital.Tools.Service.GovUkNotify.UnitTests
                 A.CallTo(() => fakeApplicationLogger.Error(A<string>._, A<Exception>._)).MustHaveHappened();
                 if (isRateLimitException)
                 {
-                    A.CallTo(() => fakeCircuitBreakerRepository.OpenCircuitBreakerAsync()).MustHaveHappened();
+                    A.CallTo(() => fakeAccountsService.OpenCircuitBreakerAsync()).MustHaveHappened();
                 }
             }
         }
@@ -153,7 +153,7 @@ namespace DFC.Digital.Tools.Service.GovUkNotify.UnitTests
         private void SetupCalls()
         {
             A.CallTo(() => fakeApplicationLogger.Error(A<string>._, A<Exception>._)).DoesNothing();
-            A.CallTo(() => fakeCircuitBreakerRepository.OpenCircuitBreakerAsync()).Returns(Task.CompletedTask);
+            A.CallTo(() => fakeAccountsService.OpenCircuitBreakerAsync()).Returns(Task.CompletedTask);
         }
     }
 }
