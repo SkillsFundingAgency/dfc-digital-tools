@@ -1,4 +1,5 @@
-﻿using DFC.Digital.Tools.Data.Interfaces;
+﻿using DFC.Digital.Tools.Core;
+using DFC.Digital.Tools.Data.Interfaces;
 using DFC.Digital.Tools.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -55,16 +56,9 @@ namespace DFC.Digital.Tools.Service.Accounts
             this.circuitBreakerCommandRepository.UpdateIfExists(circuitBreakerDetails);
         }
 
-        private CircuitBreakerDetails AddDefaultCircuitBreaker()
-        {
-            var initialCircuitBreaker = new CircuitBreakerDetails() { CircuitBreakerStatus = CircuitBreakerStatus.Closed, HalfOpenRetryCount = 0, LastCircuitOpenDate = DateTime.Now };
-            this.circuitBreakerCommandRepository.Add(initialCircuitBreaker);
-            return initialCircuitBreaker;
-        }
-
         public async Task<IEnumerable<Account>> GetNextBatchOfEmailsAsync(int batchSize)
         {
-            var nextBatch = this.accountQueryRepository.GetAccountsThatStillNeedProcessing().Take(batchSize).ToList();
+            var nextBatch = this.accountQueryRepository.GetAccountsThatStillNeedProcessing(this.configuration.GetConfigSectionKey<DateTime>(Constants.AccountRepositorySection, Constants.CutOffDate)).Take(batchSize).ToList();
             this.auditCommandRepository.SetBatchToProcessing(nextBatch);
             return nextBatch;
         }
@@ -72,6 +66,18 @@ namespace DFC.Digital.Tools.Service.Accounts
         public async Task InsertAuditAsync(AccountNotificationAudit accountNotificationAudit)
         {
            this.auditCommandRepository.Add(accountNotificationAudit);
+        }
+
+        public async Task SetBatchToCircuitGotBrokenAsync(IEnumerable<Account> accounts)
+        {
+            this.auditCommandRepository.SetBatchToCircuitGotBroken(accounts.ToList());
+        }
+
+        private CircuitBreakerDetails AddDefaultCircuitBreaker()
+        {
+            var initialCircuitBreaker = new CircuitBreakerDetails() { CircuitBreakerStatus = CircuitBreakerStatus.Closed, HalfOpenRetryCount = 0, LastCircuitOpenDate = DateTime.Now };
+            this.circuitBreakerCommandRepository.Add(initialCircuitBreaker);
+            return initialCircuitBreaker;
         }
     }
 }

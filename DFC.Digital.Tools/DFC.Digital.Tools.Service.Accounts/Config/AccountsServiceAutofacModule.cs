@@ -1,7 +1,4 @@
 ﻿using Autofac;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DFC.Digital.Tools.Service.Accounts
 {
@@ -11,7 +8,7 @@ namespace DFC.Digital.Tools.Service.Accounts
         {
             base.Load(builder);
 
-            builder.RegisterAssemblyTypes(ThisAssembly).AsImplementedInterfaces();
+            builder.RegisterAssemblyTypes(this.ThisAssembly).AsImplementedInterfaces();
         }
     }
 }

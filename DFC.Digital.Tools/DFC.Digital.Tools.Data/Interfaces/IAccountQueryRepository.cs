@@ -9,6 +9,6 @@ namespace DFC.Digital.Tools.Data.Interfaces
 {
     public interface IAccountQueryRepository
     {
-        IQueryable<Account> GetAccountsThatStillNeedProcessing();
+        IQueryable<Account> GetAccountsThatStillNeedProcessing(DateTime cutOffDate);
     }
 }

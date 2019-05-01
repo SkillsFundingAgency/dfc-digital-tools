@@ -2,6 +2,7 @@
 using DFC.Digital.Tools.Data.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace DFC.Digital.Tools.Repository.Accounts.Command
@@ -30,6 +31,13 @@ namespace DFC.Digital.Tools.Repository.Accounts.Command
                 accountsContext.Audit.Add(audit);
             }
 
+            accountsContext.SaveChanges();
+        }
+
+        public void SetBatchToCircuitGotBroken(IList<Account> accounts)
+        {
+            var audits = accountsContext.Audit.Where(b => accounts.Any(a => a.EMail.Contains(b.Email))).ToList();
+            audits.ForEach(a => a.Status = NotificationProcessingStatus.CircuitGotBroken.ToString());
             accountsContext.SaveChanges();
         }
     }
