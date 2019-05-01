@@ -8,6 +8,7 @@ namespace DFC.Digital.Tools.Data.Models
     {
         InProgress,
         Completed,
-        Failed
+        Failed,
+        CircuitGotBroken
     }
 }

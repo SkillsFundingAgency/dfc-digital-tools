@@ -10,5 +10,7 @@ namespace DFC.Digital.Tools.Data.Interfaces
         void Add(AccountNotificationAudit entity);
 
         void SetBatchToProcessing(IList<Account> accounts);
+
+        void SetBatchToCircuitGotBroken(IList<Account> accounts);
     }
 }

@@ -56,13 +56,6 @@ namespace DFC.Digital.Tools.Service.Accounts
             this.circuitBreakerCommandRepository.UpdateIfExists(circuitBreakerDetails);
         }
 
-        private CircuitBreakerDetails AddDefaultCircuitBreaker()
-        {
-            var initialCircuitBreaker = new CircuitBreakerDetails() { CircuitBreakerStatus = CircuitBreakerStatus.Closed, HalfOpenRetryCount = 0, LastCircuitOpenDate = DateTime.Now };
-            this.circuitBreakerCommandRepository.Add(initialCircuitBreaker);
-            return initialCircuitBreaker;
-        }
-
         public async Task<IEnumerable<Account>> GetNextBatchOfEmailsAsync(int batchSize)
         {
             var nextBatch = this.accountQueryRepository.GetAccountsThatStillNeedProcessing(this.configuration.GetConfigSectionKey<DateTime>(Constants.AccountRepositorySection, Constants.CutOffDate)).Take(batchSize).ToList();
@@ -73,6 +66,18 @@ namespace DFC.Digital.Tools.Service.Accounts
         public async Task InsertAuditAsync(AccountNotificationAudit accountNotificationAudit)
         {
            this.auditCommandRepository.Add(accountNotificationAudit);
+        }
+
+        public async Task SetBatchToCircuitGotBrokenAsync(IList<Account> accounts)
+        {
+            this.auditCommandRepository.SetBatchToCircuitGotBroken(accounts);
+        }
+
+        private CircuitBreakerDetails AddDefaultCircuitBreaker()
+        {
+            var initialCircuitBreaker = new CircuitBreakerDetails() { CircuitBreakerStatus = CircuitBreakerStatus.Closed, HalfOpenRetryCount = 0, LastCircuitOpenDate = DateTime.Now };
+            this.circuitBreakerCommandRepository.Add(initialCircuitBreaker);
+            return initialCircuitBreaker;
         }
     }
 }
