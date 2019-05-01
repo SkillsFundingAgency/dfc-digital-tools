@@ -38,8 +38,8 @@ namespace DFC.Digital.Tools.Function.EmailNotification
 
             if (circuitBreaker.CircuitBreakerStatus != CircuitBreakerStatus.Open)
             {
-                var emailbatch = accountsService.GetNextBatchOfEmailsAsync(configuration.GetConfigSectionKey<int>(Constants.AccountRepositorySection, Constants.BatchSize));
-
+               // var emailbatch = await accountsService.GetNextBatchOfEmailsAsync(configuration.GetConfigSectionKey<int>(Constants.AccountRepositorySection, Constants.BatchSize));
+               //await accountsService.SetBatchToCircuitGotBrokenAsync(emailbatch);
                 var emailsToProcess = await citizenEmailRepository.GetCitizenEmailNotificationsAsync();
                 applicationLogger.Trace($"About to process email notifications with a batch size of {emailsToProcess.Count()}");
 

@@ -68,9 +68,9 @@ namespace DFC.Digital.Tools.Service.Accounts
            this.auditCommandRepository.Add(accountNotificationAudit);
         }
 
-        public async Task SetBatchToCircuitGotBrokenAsync(IList<Account> accounts)
+        public async Task SetBatchToCircuitGotBrokenAsync(IEnumerable<Account> accounts)
         {
-            this.auditCommandRepository.SetBatchToCircuitGotBroken(accounts);
+            this.auditCommandRepository.SetBatchToCircuitGotBroken(accounts.ToList());
         }
 
         private CircuitBreakerDetails AddDefaultCircuitBreaker()

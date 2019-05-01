@@ -13,5 +13,7 @@ namespace DFC.Digital.Tools.Data.Interfaces
         Task InsertAuditAsync(AccountNotificationAudit accountNotificationAudit);
 
         Task<CircuitBreakerDetails> GetCircuitBreakerStatusAsync();
+
+        Task SetBatchToCircuitGotBrokenAsync(IEnumerable<Account> accounts);
     }
 }
