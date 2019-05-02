@@ -66,6 +66,12 @@ namespace DFC.Digital.Tools.Function.EmailNotification
                                 : NotificationProcessingStatus.Failed
                         });
 
+                        if (serviceResponse.Success &&
+                            circuitBreaker.CircuitBreakerStatus == CircuitBreakerStatus.HalfOpen)
+                        {
+                            await accountsService.CloseCircuitBreakerAsync();
+                        }
+
                         account.Processed = true;
                     }
                     catch (Exception exception)

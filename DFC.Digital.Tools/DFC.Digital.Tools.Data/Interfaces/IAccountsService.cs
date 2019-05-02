@@ -18,6 +18,8 @@ namespace DFC.Digital.Tools.Data.Interfaces
 
         Task OpenCircuitBreakerAsync();
 
+        Task CloseCircuitBreakerAsync();
+
         Task HalfOpenCircuitBreakerAsync();
     }
 }

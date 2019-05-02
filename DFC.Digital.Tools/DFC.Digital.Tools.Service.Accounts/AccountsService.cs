@@ -37,7 +37,8 @@ namespace DFC.Digital.Tools.Service.Accounts
         {
             var circuitBreakerDetails = this.circuitBreakerQueryRepository.GetBreakerDetails();
 
-            if (circuitBreakerDetails == null)
+            if (circuitBreakerDetails == null || (circuitBreakerDetails.CircuitBreakerStatus == CircuitBreakerStatus.Open
+                && circuitBreakerDetails.LastCircuitOpenDate.AddHours(24) < DateTime.Now))
             {
                  return this.AddDefaultCircuitBreaker();
             }
@@ -78,6 +79,15 @@ namespace DFC.Digital.Tools.Service.Accounts
             await this.UpdateCircuitBreakerAsync(new CircuitBreakerDetails
             {
                 CircuitBreakerStatus = CircuitBreakerStatus.Open,
+                LastCircuitOpenDate = DateTime.Now
+            });
+        }
+
+        public async Task CloseCircuitBreakerAsync()
+        {
+            await this.UpdateCircuitBreakerAsync(new CircuitBreakerDetails
+            {
+                CircuitBreakerStatus = CircuitBreakerStatus.Closed,
                 LastCircuitOpenDate = DateTime.Now
             });
         }

@@ -72,6 +72,13 @@ namespace DFC.Digital.Tools.Function.EmailNotification.UnitTests
         {
             yield return new object[]
             {
+                HalfOpenCircuitBreakerDetails,
+                150,
+                SuccesSendNotificationResponse,
+                2
+            };
+            yield return new object[]
+            {
                 ClosedCircuitBreakerDetails,
                 150,
                 SuccesSendNotificationResponse,
@@ -180,6 +187,11 @@ namespace DFC.Digital.Tools.Function.EmailNotification.UnitTests
                     {
                         A.CallTo(() =>
                             fakeAccountsService.InsertAuditAsync(A<AccountNotificationAudit>._)).MustHaveHappened(batchAccountSize, Times.Exactly);
+                        if (circuitBreakerDetails.CircuitBreakerStatus == CircuitBreakerStatus.HalfOpen)
+                        {
+                            A.CallTo(() =>
+                                fakeAccountsService.CloseCircuitBreakerAsync()).MustHaveHappened();
+                        }
                     }
                     else
                     {
@@ -231,6 +243,7 @@ namespace DFC.Digital.Tools.Function.EmailNotification.UnitTests
             A.CallTo(() => fakeAccountsService.HalfOpenCircuitBreakerAsync()).Returns(Task.CompletedTask);
             A.CallTo(() => fakeAccountsService.InsertAuditAsync(A<AccountNotificationAudit>._)).Returns(Task.CompletedTask);
             A.CallTo(() => fakeAccountsService.SetBatchToCircuitGotBrokenAsync(A<IEnumerable<Account>>._)).Returns(Task.CompletedTask);
+            A.CallTo(() => fakeAccountsService.CloseCircuitBreakerAsync()).Returns(Task.CompletedTask);
         }
     }
 }
