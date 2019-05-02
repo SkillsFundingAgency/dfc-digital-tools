@@ -173,6 +173,10 @@ namespace DFC.Digital.Tools.Function.EmailNotification.UnitTests
             {
                 if (throwSendNotificationException)
                 {
+                    A.CallTo(() =>
+                            fakeAccountsService.InsertAuditAsync(A<AccountNotificationAudit>.That.Matches(audit =>
+                                audit.NotificationProcessingStatus == NotificationProcessingStatus.ExceptionOccured)))
+                        .MustHaveHappened();
                     A.CallTo(() => fakeAccountsService.HalfOpenCircuitBreakerAsync()).MustHaveHappened();
                     if (circuitBreakerDetails.HalfOpenRetryCount == halfOpenRetryMax)
                     {
