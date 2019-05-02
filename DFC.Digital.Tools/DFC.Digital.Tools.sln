@@ -55,6 +55,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Function.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Service.GovUkNotify.UnitTests", "DFC.Digital.Tools.Service.GovUkNotify.UnitTests\DFC.Digital.Tools.Service.GovUkNotify.UnitTests.csproj", "{7E5B4892-4B78-41B0-A920-FE7AA3E2895A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DFC.Digital.Tools.Repository.Accounts.UnitTests", "DFC.Digital.Tools.Repository.Accounts.UnitTests\DFC.Digital.Tools.Repository.Accounts.UnitTests.csproj", "{747529E0-C228-4A2A-AFA6-3814C513942F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +107,10 @@ Global
 		{7E5B4892-4B78-41B0-A920-FE7AA3E2895A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E5B4892-4B78-41B0-A920-FE7AA3E2895A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E5B4892-4B78-41B0-A920-FE7AA3E2895A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{747529E0-C228-4A2A-AFA6-3814C513942F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{747529E0-C228-4A2A-AFA6-3814C513942F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{747529E0-C228-4A2A-AFA6-3814C513942F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{747529E0-C228-4A2A-AFA6-3814C513942F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -126,6 +132,7 @@ Global
 		{DCDE302A-1885-4331-8302-BF876DFE13ED} = {ABA7B9B7-CB6E-4FCC-93CA-826B0434FED1}
 		{79A80A84-486B-4D5D-94EE-EC8CAF9BBD6F} = {867892DB-6418-44EB-86B2-B356482AFFD6}
 		{7E5B4892-4B78-41B0-A920-FE7AA3E2895A} = {38048B2C-067F-4AA2-8A92-35514DE9FFFE}
+		{747529E0-C228-4A2A-AFA6-3814C513942F} = {DCDE302A-1885-4331-8302-BF876DFE13ED}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F54425B9-099C-48A2-853A-221ED7B2CA23}
