@@ -79,7 +79,7 @@ namespace DFC.Digital.Tools.Function.EmailNotification
                         await accountsService.InsertAuditAsync(new AccountNotificationAudit
                         {
                             Email = account.EMail,
-                            NotificationProcessingStatus = NotificationProcessingStatus.ExceptionOccured,
+                            NotificationProcessingStatus = NotificationProcessingStatus.Failed,
                             Note = exception.InnerException?.Message
                         });
 

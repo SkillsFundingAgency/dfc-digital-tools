@@ -150,7 +150,7 @@ namespace DFC.Digital.Tools.Function.EmailNotification.UnitTests
             A.CallTo(() => fakeAccountsService.GetNextBatchOfEmailsAsync(A<int>._)).Returns(GetAccountsToProcess(batchAccountSize));
             if (throwSendNotificationException)
             {
-                A.CallTo(() => fakeSendCitizenNotificationService.SendCitizenNotificationAsync(A<Account>._)).Throws<Exception>();
+                A.CallTo(() => fakeSendCitizenNotificationService.SendCitizenNotificationAsync(A<Account>._)).Throws(() => new Exception(nameof(Exception), new Exception(nameof(Exception))));
             }
             else
             {
@@ -175,7 +175,7 @@ namespace DFC.Digital.Tools.Function.EmailNotification.UnitTests
                 {
                     A.CallTo(() =>
                             fakeAccountsService.InsertAuditAsync(A<AccountNotificationAudit>.That.Matches(audit =>
-                                audit.NotificationProcessingStatus == NotificationProcessingStatus.ExceptionOccured)))
+                                audit.NotificationProcessingStatus == NotificationProcessingStatus.Failed && !string.IsNullOrWhiteSpace(audit.Note))))
                         .MustHaveHappened();
                     A.CallTo(() => fakeAccountsService.HalfOpenCircuitBreakerAsync()).MustHaveHappened();
                     if (circuitBreakerDetails.HalfOpenRetryCount == halfOpenRetryMax)
@@ -211,7 +211,9 @@ namespace DFC.Digital.Tools.Function.EmailNotification.UnitTests
                         else
                         {
                             A.CallTo(() =>
-                                fakeAccountsService.InsertAuditAsync(A<AccountNotificationAudit>._)).MustHaveHappened();
+                                    fakeAccountsService.InsertAuditAsync(A<AccountNotificationAudit>.That.Matches(audit =>
+                                        audit.NotificationProcessingStatus == NotificationProcessingStatus.Failed)))
+                                .MustHaveHappened();
                         }
                     }
                 }
