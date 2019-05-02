@@ -5,6 +5,7 @@
         InProgress,
         Completed,
         Failed,
-        CircuitGotBroken
+        CircuitGotBroken,
+        ExceptionOccured
     }
 }
