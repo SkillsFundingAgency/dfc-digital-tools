@@ -20,11 +20,13 @@ namespace DFC.Digital.Tools.Repository.Accounts
 
         public IQueryable<Account> GetAccountsThatStillNeedProcessing(DateTime cutOffDate)
         {
+            var statesToGet = new string[] { "ACTIVATED", "PENDINGRESET" };
+
             var accounts = from u in accountsContext.Accounts
                            join a in accountsContext.Audit
                            on u.Mail equals a.Email into ua
                            from a in ua.DefaultIfEmpty()
-                           where (a == null || a.Status == NotificationProcessingStatus.CircuitGotBroken.ToString()) && u.Createtimestamp < cutOffDate
+                           where (a == null || a.Status == NotificationProcessingStatus.CircuitGotBroken.ToString()) && u.Createtimestamp < cutOffDate && statesToGet.Contains(u.A1lifecycleStateUpin)
                            select new Account
                            {
                                 Name = u.Name,
