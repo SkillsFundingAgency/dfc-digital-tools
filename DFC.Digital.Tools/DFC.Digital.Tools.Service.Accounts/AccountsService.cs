@@ -39,7 +39,8 @@ namespace DFC.Digital.Tools.Service.Accounts
 
             if (circuitBreakerDetails == null)
             {
-                 return this.AddDefaultCircuitBreaker();
+                this.applicationLogger.Trace("Adding default circuit breaker record on get as one does not exist");
+                return this.AddDefaultCircuitBreaker();
             }
 
             return circuitBreakerDetails;
@@ -50,6 +51,7 @@ namespace DFC.Digital.Tools.Service.Accounts
             var updated = this.circuitBreakerCommandRepository.UpdateIfExists(circuitBreakerDetails);
             if (!updated)
             {
+                this.applicationLogger.Trace("Adding default circuit breaker record on update as one does not exist");
                 this.AddDefaultCircuitBreaker();
             }
 
@@ -59,7 +61,11 @@ namespace DFC.Digital.Tools.Service.Accounts
         public async Task<IEnumerable<Account>> GetNextBatchOfEmailsAsync(int batchSize)
         {
             var nextBatch = this.accountQueryRepository.GetAccountsThatStillNeedProcessing(this.configuration.GetConfigSectionKey<DateTime>(Constants.AccountRepositorySection, Constants.CutOffDate)).Take(batchSize).ToList();
+            this.applicationLogger.Trace($"Got {nextBatch.Count} records in batch from DB, about to set audit to processing for batch");
+
             this.auditCommandRepository.SetBatchToProcessing(nextBatch);
+            this.applicationLogger.Trace($"Set {nextBatch.Count} records for batch to processing");
+
             return nextBatch;
         }
 
@@ -70,7 +76,7 @@ namespace DFC.Digital.Tools.Service.Accounts
 
         public async Task SetBatchToCircuitGotBrokenAsync(IEnumerable<Account> accounts)
         {
-            this.auditCommandRepository.SetBatchToCircuitGotBroken(accounts.ToList());
+           this.auditCommandRepository.SetBatchToCircuitGotBroken(accounts.ToList());
         }
 
         public async Task OpenCircuitBreakerAsync()
@@ -88,10 +94,12 @@ namespace DFC.Digital.Tools.Service.Accounts
             if (currentCircuitBreaker?.CircuitBreakerStatus == CircuitBreakerStatus.HalfOpen)
             {
                 currentCircuitBreaker.HalfOpenRetryCount = currentCircuitBreaker.HalfOpenRetryCount + 1;
+                this.applicationLogger.Trace($"Circuit breaker is half open, setting HalfOpenRetryCount to  {currentCircuitBreaker.HalfOpenRetryCount} ");
                 await this.UpdateCircuitBreakerAsync(currentCircuitBreaker);
             }
             else
             {
+                this.applicationLogger.Trace($"Setting circuit breaker to half open");
                 await this.UpdateCircuitBreakerAsync(new CircuitBreakerDetails
                 {
                     CircuitBreakerStatus = CircuitBreakerStatus.HalfOpen,
