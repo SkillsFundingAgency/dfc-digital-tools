@@ -110,17 +110,16 @@ namespace DFC.Digital.Tools.Service.Accounts
             {
                 currentCircuitBreaker.HalfOpenRetryCount = currentCircuitBreaker.HalfOpenRetryCount + 1;
                 this.applicationLogger.Trace($"Circuit breaker is half open, setting HalfOpenRetryCount to  {currentCircuitBreaker.HalfOpenRetryCount} ");
-                await this.UpdateCircuitBreakerAsync(currentCircuitBreaker);
             }
             else
             {
                 this.applicationLogger.Trace($"Setting circuit breaker to half open");
-                await this.UpdateCircuitBreakerAsync(new CircuitBreakerDetails
-                {
-                    CircuitBreakerStatus = CircuitBreakerStatus.HalfOpen,
-                    LastCircuitOpenDate = DateTime.Now
-                });
+                currentCircuitBreaker.CircuitBreakerStatus = CircuitBreakerStatus.HalfOpen;
+                currentCircuitBreaker.HalfOpenRetryCount = 0;
+                currentCircuitBreaker.LastCircuitOpenDate = DateTime.Now;
             }
+
+            await this.UpdateCircuitBreakerAsync(currentCircuitBreaker);
         }
 
         private CircuitBreakerDetails AddDefaultCircuitBreaker()
