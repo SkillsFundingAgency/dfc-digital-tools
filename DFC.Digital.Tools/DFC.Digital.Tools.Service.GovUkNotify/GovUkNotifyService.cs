@@ -37,6 +37,7 @@ namespace DFC.Digital.Tools.Service.GovUkNotify
                         Constants.GovUkNotifySection,
                         Constants.GovUkNotifyTemplateId),
                     Convert(GetGovUkNotifyPersonalisation(notification)));
+
                 sendNotificationResponse.Success = !string.IsNullOrEmpty(response?.id);
             }
             catch (NotifyClientException ex)

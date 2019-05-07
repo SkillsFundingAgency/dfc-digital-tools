@@ -37,11 +37,17 @@ namespace DFC.Digital.Tools.Service.Accounts
         {
             var circuitBreakerDetails = this.circuitBreakerQueryRepository.GetBreakerDetails();
 
-            if (circuitBreakerDetails == null || (circuitBreakerDetails.CircuitBreakerStatus == CircuitBreakerStatus.Open
-                && circuitBreakerDetails.LastCircuitOpenDate.AddHours(24) < DateTime.Now))
+            if (circuitBreakerDetails == null)
             {
                 this.applicationLogger.Trace("Adding default circuit breaker record on get as one does not exist");
                 return this.AddDefaultCircuitBreaker();
+            }
+            else if (circuitBreakerDetails.CircuitBreakerStatus == CircuitBreakerStatus.Open && circuitBreakerDetails.LastCircuitOpenDate.AddHours(24) < DateTime.Now)
+            {
+                circuitBreakerDetails.CircuitBreakerStatus = CircuitBreakerStatus.Closed;
+                circuitBreakerDetails.HalfOpenRetryCount = 0;
+                circuitBreakerDetails.LastCircuitOpenDate = DateTime.Now;
+                await this.UpdateCircuitBreakerAsync(circuitBreakerDetails);
             }
 
             return circuitBreakerDetails;
@@ -54,9 +60,8 @@ namespace DFC.Digital.Tools.Service.Accounts
             {
                 this.applicationLogger.Trace("Adding default circuit breaker record on update as one does not exist");
                 this.AddDefaultCircuitBreaker();
+                this.circuitBreakerCommandRepository.UpdateIfExists(circuitBreakerDetails);
             }
-
-            this.circuitBreakerCommandRepository.UpdateIfExists(circuitBreakerDetails);
         }
 
         public async Task<IEnumerable<Account>> GetNextBatchOfEmailsAsync(int batchSize)

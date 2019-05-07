@@ -18,7 +18,7 @@ namespace DFC.Digital.Tools.Repository.Accounts.UnitTests
 
         public CircuitBreakerCommandRepositoryTests()
         {
-            fakeDbContext = A.Fake<DFCUserAccountsContext>();
+            this.fakeDbContext = A.Fake<DFCUserAccountsContext>();
             this.repo = new CircuitBreakerCommandRepository(this.fakeDbContext);
             this.testCircuitBreakerTable = new List<CircuitBreaker>();
             var fakeCircuitBreakerDbSet = Aef.FakeDbSet(this.testCircuitBreakerTable);
