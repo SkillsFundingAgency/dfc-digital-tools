@@ -25,29 +25,29 @@ namespace DFC.Digital.Tools.Service.Accounts
                                 ICircuitBreakerQueryRepository circuitBreakerQueryRepository,
                                 ICircuitBreakerCommandRepository circuitBreakerCommandRepository)
         {
-            this.applicationLogger = applicationLogger;
-            this.configuration = configuration;
-            this.accountQueryRepository = accountQueryRepository;
-            this.auditCommandRepository = auditCommandRepository;
-            this.circuitBreakerQueryRepository = circuitBreakerQueryRepository;
-            this.circuitBreakerCommandRepository = circuitBreakerCommandRepository;
+           this.applicationLogger = applicationLogger;
+           this.configuration = configuration;
+           this.accountQueryRepository = accountQueryRepository;
+           this.auditCommandRepository = auditCommandRepository;
+           this.circuitBreakerQueryRepository = circuitBreakerQueryRepository;
+           this.circuitBreakerCommandRepository = circuitBreakerCommandRepository;
         }
 
         public async Task<CircuitBreakerDetails> GetCircuitBreakerStatusAsync()
         {
-            var circuitBreakerDetails = this.circuitBreakerQueryRepository.GetBreakerDetails();
+            var circuitBreakerDetails = circuitBreakerQueryRepository.GetBreakerDetails();
 
             if (circuitBreakerDetails == null)
             {
-                this.applicationLogger.Trace("Adding default circuit breaker record on get as one does not exist");
-                return this.AddDefaultCircuitBreaker();
+               applicationLogger.Trace("Adding default circuit breaker record on get as one does not exist");
+                return AddDefaultCircuitBreaker();
             }
             else if (circuitBreakerDetails.CircuitBreakerStatus == CircuitBreakerStatus.Open && circuitBreakerDetails.LastCircuitOpenDate.AddHours(24) < DateTime.Now)
             {
                 circuitBreakerDetails.CircuitBreakerStatus = CircuitBreakerStatus.Closed;
                 circuitBreakerDetails.HalfOpenRetryCount = 0;
                 circuitBreakerDetails.LastCircuitOpenDate = DateTime.Now;
-                await this.UpdateCircuitBreakerAsync(circuitBreakerDetails);
+                await UpdateCircuitBreakerAsync(circuitBreakerDetails);
             }
 
             return circuitBreakerDetails;
@@ -55,39 +55,39 @@ namespace DFC.Digital.Tools.Service.Accounts
 
         public async Task UpdateCircuitBreakerAsync(CircuitBreakerDetails circuitBreakerDetails)
         {
-            var updated = this.circuitBreakerCommandRepository.UpdateIfExists(circuitBreakerDetails);
+            var updated = circuitBreakerCommandRepository.UpdateIfExists(circuitBreakerDetails);
             if (!updated)
             {
-                this.applicationLogger.Trace("Adding default circuit breaker record on update as one does not exist");
-                this.AddDefaultCircuitBreaker();
-                this.circuitBreakerCommandRepository.UpdateIfExists(circuitBreakerDetails);
+               applicationLogger.Trace("Adding default circuit breaker record on update as one does not exist");
+               AddDefaultCircuitBreaker();
+               circuitBreakerCommandRepository.UpdateIfExists(circuitBreakerDetails);
             }
         }
 
         public async Task<IEnumerable<Account>> GetNextBatchOfEmailsAsync(int batchSize)
         {
-            var nextBatch = this.accountQueryRepository.GetAccountsThatStillNeedProcessing(this.configuration.GetConfigSectionKey<DateTime>(Constants.AccountRepositorySection, Constants.CutOffDate)).Take(batchSize).ToList();
-            this.applicationLogger.Trace($"Got {nextBatch.Count} records in batch from DB, about to set audit to processing for batch");
+            var nextBatch = accountQueryRepository.GetAccountsThatStillNeedProcessing(this.configuration.GetConfigSectionKey<DateTime>(Constants.AccountRepositorySection, Constants.CutOffDate)).Take(batchSize).ToList();
+           applicationLogger.Trace($"Got {nextBatch.Count} records in batch from DB, about to set audit to processing for batch");
 
-            this.auditCommandRepository.SetBatchToProcessing(nextBatch);
-            this.applicationLogger.Trace($"Set {nextBatch.Count} records for batch to processing");
+           auditCommandRepository.SetBatchToProcessing(nextBatch);
+           applicationLogger.Trace($"Set {nextBatch.Count} records for batch to processing");
 
             return nextBatch;
         }
 
         public async Task InsertAuditAsync(AccountNotificationAudit accountNotificationAudit)
         {
-           this.auditCommandRepository.Add(accountNotificationAudit);
+          auditCommandRepository.Add(accountNotificationAudit);
         }
 
         public async Task SetBatchToCircuitGotBrokenAsync(IEnumerable<Account> accounts)
         {
-           this.auditCommandRepository.SetBatchToCircuitGotBroken(accounts.ToList());
+          auditCommandRepository.SetBatchToCircuitGotBroken(accounts.ToList());
         }
 
         public async Task OpenCircuitBreakerAsync()
         {
-            await this.UpdateCircuitBreakerAsync(new CircuitBreakerDetails
+            await UpdateCircuitBreakerAsync(new CircuitBreakerDetails
             {
                 CircuitBreakerStatus = CircuitBreakerStatus.Open,
                 LastCircuitOpenDate = DateTime.Now
@@ -96,7 +96,7 @@ namespace DFC.Digital.Tools.Service.Accounts
 
         public async Task CloseCircuitBreakerAsync()
         {
-            await this.UpdateCircuitBreakerAsync(new CircuitBreakerDetails
+            await UpdateCircuitBreakerAsync(new CircuitBreakerDetails
             {
                 CircuitBreakerStatus = CircuitBreakerStatus.Closed,
                 LastCircuitOpenDate = DateTime.Now
@@ -105,27 +105,27 @@ namespace DFC.Digital.Tools.Service.Accounts
 
         public async Task HalfOpenCircuitBreakerAsync()
         {
-            var currentCircuitBreaker = await this.GetCircuitBreakerStatusAsync();
+            var currentCircuitBreaker = await GetCircuitBreakerStatusAsync();
             if (currentCircuitBreaker?.CircuitBreakerStatus == CircuitBreakerStatus.HalfOpen)
             {
                 currentCircuitBreaker.HalfOpenRetryCount = currentCircuitBreaker.HalfOpenRetryCount + 1;
-                this.applicationLogger.Trace($"Circuit breaker is half open, setting HalfOpenRetryCount to  {currentCircuitBreaker.HalfOpenRetryCount} ");
+               applicationLogger.Trace($"Circuit breaker is half open, setting HalfOpenRetryCount to  {currentCircuitBreaker.HalfOpenRetryCount} ");
             }
             else
             {
-                this.applicationLogger.Trace($"Setting circuit breaker to half open");
+               applicationLogger.Trace($"Setting circuit breaker to half open");
                 currentCircuitBreaker.CircuitBreakerStatus = CircuitBreakerStatus.HalfOpen;
                 currentCircuitBreaker.HalfOpenRetryCount = 0;
                 currentCircuitBreaker.LastCircuitOpenDate = DateTime.Now;
             }
 
-            await this.UpdateCircuitBreakerAsync(currentCircuitBreaker);
+            await UpdateCircuitBreakerAsync(currentCircuitBreaker);
         }
 
         private CircuitBreakerDetails AddDefaultCircuitBreaker()
         {
             var initialCircuitBreaker = new CircuitBreakerDetails() { CircuitBreakerStatus = CircuitBreakerStatus.Closed, HalfOpenRetryCount = 0, LastCircuitOpenDate = DateTime.Now };
-            this.circuitBreakerCommandRepository.Add(initialCircuitBreaker);
+            circuitBreakerCommandRepository.Add(initialCircuitBreaker);
             return initialCircuitBreaker;
         }
     }

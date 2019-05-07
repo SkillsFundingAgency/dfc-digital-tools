@@ -18,11 +18,11 @@ namespace DFC.Digital.Tools.Repository.Accounts.UnitTests
 
         public CircuitBreakerCommandRepositoryTests()
         {
-            this.fakeDbContext = A.Fake<DFCUserAccountsContext>();
-            this.repo = new CircuitBreakerCommandRepository(this.fakeDbContext);
-            this.testCircuitBreakerTable = new List<CircuitBreaker>();
-            var fakeCircuitBreakerDbSet = Aef.FakeDbSet(this.testCircuitBreakerTable);
-            A.CallTo(() => this.fakeDbContext.CircuitBreaker).Returns(fakeCircuitBreakerDbSet);
+           fakeDbContext = A.Fake<DFCUserAccountsContext>();
+           repo = new CircuitBreakerCommandRepository(this.fakeDbContext);
+           testCircuitBreakerTable = new List<CircuitBreaker>();
+           var fakeCircuitBreakerDbSet = Aef.FakeDbSet(this.testCircuitBreakerTable);
+           A.CallTo(() => fakeDbContext.CircuitBreaker).Returns(fakeCircuitBreakerDbSet);
         }
 
         [Fact]
@@ -33,14 +33,14 @@ namespace DFC.Digital.Tools.Repository.Accounts.UnitTests
             var testCircuitBreaker = new CircuitBreakerDetails() { CircuitBreakerStatus = CircuitBreakerStatus.HalfOpen, HalfOpenRetryCount = 5, LastCircuitOpenDate = lastCircuitOpenDate };
 
             // Act
-            this.repo.Add(testCircuitBreaker);
+            repo.Add(testCircuitBreaker);
 
             // Asserts
-            A.CallTo(() => this.fakeDbContext.CircuitBreaker.Add(A<CircuitBreaker>._)).MustHaveHappened();
+            A.CallTo(() => fakeDbContext.CircuitBreaker.Add(A<CircuitBreaker>._)).MustHaveHappened();
 
-            this.testCircuitBreakerTable.Count().Should().Be(1);
+            testCircuitBreakerTable.Count().Should().Be(1);
 
-            var insertedCircuitBreaker = this.testCircuitBreakerTable.FirstOrDefault();
+            var insertedCircuitBreaker = testCircuitBreakerTable.FirstOrDefault();
             insertedCircuitBreaker.CircuitBreakerStatus.Should().Be(testCircuitBreaker.CircuitBreakerStatus.ToString());
             insertedCircuitBreaker.HalfOpenRetryCount.Should().Be(testCircuitBreaker.HalfOpenRetryCount);
             insertedCircuitBreaker.LastCircuitOpenDate.Should().Be(testCircuitBreaker.LastCircuitOpenDate);
@@ -57,19 +57,19 @@ namespace DFC.Digital.Tools.Repository.Accounts.UnitTests
 
             if (circuitBreakerRecordExists)
             {
-                this.testCircuitBreakerTable.Add(new CircuitBreaker());
+               testCircuitBreakerTable.Add(new CircuitBreaker());
             }
 
-            var result = this.repo.UpdateIfExists(testCircuitBreaker);
+            var result = repo.UpdateIfExists(testCircuitBreaker);
 
             // Asserts
             result.Should().Be(circuitBreakerRecordExists);
 
             if (circuitBreakerRecordExists)
             {
-                A.CallTo(() => this.fakeDbContext.SaveChanges()).MustHaveHappened();
+                A.CallTo(() => fakeDbContext.SaveChanges()).MustHaveHappened();
 
-                var insertedCircuitBreaker = this.testCircuitBreakerTable.FirstOrDefault();
+                var insertedCircuitBreaker = testCircuitBreakerTable.FirstOrDefault();
                 insertedCircuitBreaker.CircuitBreakerStatus.Should().Be(testCircuitBreaker.CircuitBreakerStatus.ToString());
                 insertedCircuitBreaker.HalfOpenRetryCount.Should().Be(testCircuitBreaker.HalfOpenRetryCount);
                 insertedCircuitBreaker.LastCircuitOpenDate.Should().Be(testCircuitBreaker.LastCircuitOpenDate);

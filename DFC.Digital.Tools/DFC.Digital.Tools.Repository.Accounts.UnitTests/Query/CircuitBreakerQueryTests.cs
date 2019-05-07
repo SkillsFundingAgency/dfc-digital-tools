@@ -1,15 +1,15 @@
-﻿namespace DFC.Digital.Tools.Repository.Accounts.UnitTests
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using DFC.Digital.Tools.Data.Models;
-    using DFC.Digital.Tools.Repository.Accounts.Query;
-    using FakeItEasy;
-    using FluentAssertions;
-    using Microsoft.EntityFrameworkCore.Testing.FakeItEasy;
-    using Xunit;
+﻿using DFC.Digital.Tools.Data.Models;
+using DFC.Digital.Tools.Repository.Accounts.Query;
+using FakeItEasy;
+using FluentAssertions;
+using Microsoft.EntityFrameworkCore.Testing.FakeItEasy;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Xunit;
 
+namespace DFC.Digital.Tools.Repository.Accounts.UnitTests
+{
     public class CircuitBreakerQueryTests
     {
         [Fact]

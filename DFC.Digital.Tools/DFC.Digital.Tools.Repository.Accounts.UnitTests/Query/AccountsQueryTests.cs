@@ -1,15 +1,15 @@
-﻿namespace DFC.Digital.Tools.Repository.Accounts.UnitTests
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Linq;
-    using DFC.Digital.Tools.Data.Models;
-    using FakeItEasy;
-    using FluentAssertions;
-    using Microsoft.EntityFrameworkCore.Testing.FakeItEasy;
-    using Xunit;
+﻿using DFC.Digital.Tools.Data.Models;
+using FakeItEasy;
+using FluentAssertions;
+using Microsoft.EntityFrameworkCore.Testing.FakeItEasy;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using Xunit;
 
+namespace DFC.Digital.Tools.Repository.Accounts.UnitTests
+{
     public class AccountsQueryTests
     {
         private readonly DFCUserAccountsContext fakeDbContext;
@@ -18,18 +18,18 @@
 
         public AccountsQueryTests()
         {
-            this.fakeDbContext = A.Fake<DFCUserAccountsContext>();
-            this.repo = new AccountsQuery(this.fakeDbContext);
-            this.testAuditTable = new List<Audit>();
+           fakeDbContext = A.Fake<DFCUserAccountsContext>();
+           repo = new AccountsQuery(this.fakeDbContext);
+           testAuditTable = new List<Audit>();
             var fakeAuditDbSet = Aef.FakeDbSet(this.testAuditTable);
-            A.CallTo(() => this.fakeDbContext.Audit).Returns(fakeAuditDbSet);
+            A.CallTo(() => fakeDbContext.Audit).Returns(fakeAuditDbSet);
         }
 
         [Fact]
         public void GetAccountsThatStillNeedProcessingDateTest()
         {
             // Setup
-            var cutOfDate = this.ConvertToDateTime("01-Nov-2018");
+            var cutOfDate = ConvertToDateTime("01-Nov-2018");
 
             List<Accounts> testAccountTable = new List<Accounts>
             {
@@ -39,10 +39,10 @@
                 new Accounts { Name = "After Cut Off Daye", Mail = "TestMail4@dummy.com", Uid = "TestMail4@dummy.com", A1lifecycleStateUpin = "ACTIVATED", Createtimestamp = cutOfDate.AddDays(1) }
             };
             var fakeDbSet = Aef.FakeDbSet(testAccountTable);
-            A.CallTo(() => this.fakeDbContext.Accounts).Returns(fakeDbSet);
+            A.CallTo(() => fakeDbContext.Accounts).Returns(fakeDbSet);
 
             // Act
-            var results = this.repo.GetAccountsThatStillNeedProcessing(cutOfDate);
+            var results = repo.GetAccountsThatStillNeedProcessing(cutOfDate);
 
             // Assert
             results.Count().Should().Be(2);
@@ -52,7 +52,7 @@
         public void GetAccountsThatStillNeedProcessingProcessingStatesTest()
         {
             // Setup
-            var cutOfDate = this.ConvertToDateTime("31-Oct-2018");
+            var cutOfDate = ConvertToDateTime("31-Oct-2018");
 
             List<Accounts> testAccountTable = new List<Accounts>
             {
@@ -63,17 +63,17 @@
                 new Accounts { Name = "In Audit - Completed", Mail = "TestMail5@dummy.com", Uid = "TestMail5@dummy.com", A1lifecycleStateUpin = "ACTIVATED", Createtimestamp = cutOfDate }
             };
             var fakeDbSet = Aef.FakeDbSet(testAccountTable);
-            A.CallTo(() => this.fakeDbContext.Accounts).Returns(fakeDbSet);
+            A.CallTo(() => fakeDbContext.Accounts).Returns(fakeDbSet);
 
-            this.testAuditTable.Add(new Audit { Email = "TestMail2@dummy.com", Status = NotificationProcessingStatus.InProgress.ToString() });
-            this.testAuditTable.Add(new Audit { Email = "TestMail3@dummy.com", Status = NotificationProcessingStatus.CircuitGotBroken.ToString() });
-            this.testAuditTable.Add(new Audit { Email = "TestMail4@dummy.com", Status = NotificationProcessingStatus.InProgress.ToString() });
-            this.testAuditTable.Add(new Audit { Email = "TestMail4@dummy.com", Status = NotificationProcessingStatus.Failed.ToString() });
-            this.testAuditTable.Add(new Audit { Email = "TestMail5@dummy.com", Status = NotificationProcessingStatus.InProgress.ToString() });
-            this.testAuditTable.Add(new Audit { Email = "TestMail5@dummy.com", Status = NotificationProcessingStatus.Completed.ToString() });
+           testAuditTable.Add(new Audit { Email = "TestMail2@dummy.com", Status = NotificationProcessingStatus.InProgress.ToString() });
+           testAuditTable.Add(new Audit { Email = "TestMail3@dummy.com", Status = NotificationProcessingStatus.CircuitGotBroken.ToString() });
+           testAuditTable.Add(new Audit { Email = "TestMail4@dummy.com", Status = NotificationProcessingStatus.InProgress.ToString() });
+           testAuditTable.Add(new Audit { Email = "TestMail4@dummy.com", Status = NotificationProcessingStatus.Failed.ToString() });
+           testAuditTable.Add(new Audit { Email = "TestMail5@dummy.com", Status = NotificationProcessingStatus.InProgress.ToString() });
+           testAuditTable.Add(new Audit { Email = "TestMail5@dummy.com", Status = NotificationProcessingStatus.Completed.ToString() });
 
             // Act
-            var results = this.repo.GetAccountsThatStillNeedProcessing(cutOfDate.AddDays(1));
+            var results = repo.GetAccountsThatStillNeedProcessing(cutOfDate.AddDays(1));
 
             // Assert should have the one that not in Audit and the broken circuit one
             results.Count().Should().Be(2);
@@ -83,7 +83,7 @@
         public void GetAccountsThatStillNeedProcessingStatesTest()
         {
             // Setup
-            var cutOfDate = this.ConvertToDateTime("31-Oct-2018");
+            var cutOfDate = ConvertToDateTime("31-Oct-2018");
 
             List<Accounts> testAccountTable = new List<Accounts>
             {
@@ -93,10 +93,10 @@
                 new Accounts { Name = "PENDINGRESET", Mail = "TestMail4@dummy.com", Uid = "TestMail4@dummy.com", A1lifecycleStateUpin = "PENDINGRESET", Createtimestamp = cutOfDate },
             };
             var fakeDbSet = Aef.FakeDbSet(testAccountTable);
-            A.CallTo(() => this.fakeDbContext.Accounts).Returns(fakeDbSet);
+            A.CallTo(() => fakeDbContext.Accounts).Returns(fakeDbSet);
 
             // Act
-            var results = this.repo.GetAccountsThatStillNeedProcessing(cutOfDate.AddDays(1));
+            var results = repo.GetAccountsThatStillNeedProcessing(cutOfDate.AddDays(1));
 
             // Assert should get the one Activated and Pending Activation.
             results.Count().Should().Be(2);
@@ -106,16 +106,16 @@
         public void GetAccountsThatStillNeedProcessingMapingTest()
         {
             // Setup
-            var cutOfDate = this.ConvertToDateTime("31-Oct-2018");
+            var cutOfDate = ConvertToDateTime("31-Oct-2018");
             List<Accounts> testAccountTable = new List<Accounts>
             {
                 new Accounts { Name = nameof(Accounts.Name), Mail = nameof(Accounts.Mail), Uid = nameof(Accounts.Name), A1lifecycleStateUpin = "ACTIVATED", Createtimestamp = cutOfDate.AddDays(-50) },
             };
             var fakeDbSet = Aef.FakeDbSet(testAccountTable);
-            A.CallTo(() => this.fakeDbContext.Accounts).Returns(fakeDbSet);
+            A.CallTo(() => fakeDbContext.Accounts).Returns(fakeDbSet);
 
             // Act
-            var results = this.repo.GetAccountsThatStillNeedProcessing(cutOfDate.AddDays(1));
+            var results = repo.GetAccountsThatStillNeedProcessing(cutOfDate.AddDays(1));
 
             // Assert
             results.Count().Should().Be(1);
