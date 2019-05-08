@@ -28,7 +28,7 @@ namespace DFC.Digital.Tools.Repository.Accounts.UnitTests
         public void AddAuditTest()
         {
             // Act
-           repo.Add(new AccountNotificationAudit() { Email = nameof(AccountNotificationAudit.Email), NotificationProcessingStatus = NotificationProcessingStatus.Completed, Note = nameof(AccountNotificationAudit.Note) });
+           repo.AddAsync(new AccountNotificationAudit() { Email = nameof(AccountNotificationAudit.Email), NotificationProcessingStatus = NotificationProcessingStatus.Completed, Note = nameof(AccountNotificationAudit.Note) }).Wait();
 
             // Asserts
             A.CallTo(() => fakeDbContext.Audit.Add(A<Audit>._)).MustHaveHappened();
@@ -48,7 +48,7 @@ namespace DFC.Digital.Tools.Repository.Accounts.UnitTests
             var accounts = SetUpTestAccounts();
 
             // Act
-           repo.SetBatchToProcessing(accounts);
+            repo.SetBatchToProcessingAsync(accounts).Wait();
 
             // Asserts
             A.CallTo(() => fakeDbContext.Audit.Add(A<Audit>._)).MustHaveHappenedTwiceExactly();
@@ -62,8 +62,8 @@ namespace DFC.Digital.Tools.Repository.Accounts.UnitTests
             var accounts = SetUpTestAccounts();
 
             // Act
-           repo.SetBatchToProcessing(accounts);
-           repo.SetBatchToCircuitGotBroken(accounts);
+           repo.SetBatchToProcessingAsync(accounts).Wait();
+           repo.SetBatchToCircuitGotBrokenAsync(accounts).Wait();
 
             // Asserts
            CheckExpectedResults(accounts, NotificationProcessingStatus.CircuitGotBroken.ToString());

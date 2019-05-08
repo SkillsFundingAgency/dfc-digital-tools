@@ -60,15 +60,13 @@ namespace DFC.Digital.Tools.Repository.Accounts.UnitTests
                testCircuitBreakerTable.Add(new CircuitBreaker());
             }
 
-            var result = repo.UpdateIfExists(testCircuitBreaker);
+            var result = repo.UpdateIfExistsAsync(testCircuitBreaker).Result;
 
             // Asserts
             result.Should().Be(circuitBreakerRecordExists);
 
             if (circuitBreakerRecordExists)
             {
-                A.CallTo(() => fakeDbContext.SaveChanges()).MustHaveHappened();
-
                 var insertedCircuitBreaker = testCircuitBreakerTable.FirstOrDefault();
                 insertedCircuitBreaker.CircuitBreakerStatus.Should().Be(testCircuitBreaker.CircuitBreakerStatus.ToString());
                 insertedCircuitBreaker.HalfOpenRetryCount.Should().Be(testCircuitBreaker.HalfOpenRetryCount);

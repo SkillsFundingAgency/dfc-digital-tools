@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DFC.Digital.Tools.Repository.Accounts.Command
 {
@@ -16,14 +17,14 @@ namespace DFC.Digital.Tools.Repository.Accounts.Command
             this.accountsContext = accountsContext;
         }
 
-        public void Add(AccountNotificationAudit accountNotificationAudit)
+        public async Task AddAsync(AccountNotificationAudit accountNotificationAudit)
         {
             Audit audit = new Audit { Email = accountNotificationAudit.Email, Status = accountNotificationAudit.NotificationProcessingStatus.ToString(), Notes = accountNotificationAudit.Note };
             accountsContext.Audit.Add(audit);
-            accountsContext.SaveChanges();
+            await accountsContext.SaveChangesAsync();
         }
 
-        public void SetBatchToProcessing(IList<Account> accounts)
+        public async Task SetBatchToProcessingAsync(IList<Account> accounts)
         {
             foreach (var a in accounts)
             {
@@ -31,14 +32,14 @@ namespace DFC.Digital.Tools.Repository.Accounts.Command
                 accountsContext.Audit.Add(audit);
             }
 
-            accountsContext.SaveChanges();
+            await accountsContext.SaveChangesAsync();
         }
 
-        public void SetBatchToCircuitGotBroken(IList<Account> accounts)
+        public async Task SetBatchToCircuitGotBrokenAsync(IList<Account> accounts)
         {
             var audits = accountsContext.Audit.Where(b => accounts.Any(a => a.EMail.Contains(b.Email))).ToList();
             audits.ForEach(a => a.Status = NotificationProcessingStatus.CircuitGotBroken.ToString());
-            accountsContext.SaveChanges();
+            await accountsContext.SaveChangesAsync();
         }
     }
 }

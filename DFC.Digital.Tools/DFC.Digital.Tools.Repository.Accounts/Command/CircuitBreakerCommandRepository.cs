@@ -1,6 +1,7 @@
 ﻿using DFC.Digital.Tools.Data.Interfaces;
 using DFC.Digital.Tools.Data.Models;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DFC.Digital.Tools.Repository.Accounts.Command
 {
@@ -20,7 +21,7 @@ namespace DFC.Digital.Tools.Repository.Accounts.Command
             accountsContext.SaveChanges();
         }
 
-        public bool UpdateIfExists(CircuitBreakerDetails entity)
+        public async Task<bool> UpdateIfExistsAsync(CircuitBreakerDetails entity)
         {
             var circuitBreaker = accountsContext.CircuitBreaker.FirstOrDefault();
             if (circuitBreaker != null)
@@ -28,7 +29,7 @@ namespace DFC.Digital.Tools.Repository.Accounts.Command
                 circuitBreaker.CircuitBreakerStatus = entity.CircuitBreakerStatus.ToString();
                 circuitBreaker.LastCircuitOpenDate = entity.LastCircuitOpenDate;
                 circuitBreaker.HalfOpenRetryCount = entity.HalfOpenRetryCount;
-                accountsContext.SaveChanges();
+                await accountsContext.SaveChangesAsync();
                 return true;
             }
 

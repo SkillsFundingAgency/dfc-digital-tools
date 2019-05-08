@@ -5,6 +5,7 @@ using FluentAssertions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace DFC.Digital.Tools.Service.Accounts.UnitTests
@@ -59,7 +60,7 @@ namespace DFC.Digital.Tools.Service.Accounts.UnitTests
             var dummyCircuitBreakerDetails = new CircuitBreakerDetails() { CircuitBreakerStatus = circuitBreakerStatus, HalfOpenRetryCount = 2, LastCircuitOpenDate = DateTime.Now.AddHours(hoursInSate * -1) };
 
             A.CallTo(() => fakeCircuitBreakerQueryRepository.GetBreakerDetails()).Returns(dummyCircuitBreakerDetails);
-            A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExists(A<CircuitBreakerDetails>._)).Returns(true);
+            A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExistsAsync(A<CircuitBreakerDetails>._)).Returns(true);
 
             // Act
             var accountService = new AccountsService(fakeApplicationLogger, fakeConfiguration, fakeAccountQueryRepository, fakeAuditCommandRepository, fakeCircuitBreakerQueryRepository, fakeCircuitBreakerCommandRepository);
@@ -69,14 +70,14 @@ namespace DFC.Digital.Tools.Service.Accounts.UnitTests
             if (circuitBreakerStatus == CircuitBreakerStatus.Open && hoursInSate > 24)
             {
                 // if it was open and it been over 24 hours since then it gets reset
-                A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExists(A<CircuitBreakerDetails>._)).MustHaveHappenedOnceExactly();
+                A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExistsAsync(A<CircuitBreakerDetails>._)).MustHaveHappenedOnceExactly();
                 result.CircuitBreakerStatus.Should().Be(CircuitBreakerStatus.Closed);
                 result.HalfOpenRetryCount.Should().Be(0);
                 result.LastCircuitOpenDate.Should().BeCloseTo(DateTime.Now, 1000);
             }
             else
             {
-                A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExists(A<CircuitBreakerDetails>._)).MustNotHaveHappened();
+                A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExistsAsync(A<CircuitBreakerDetails>._)).MustNotHaveHappened();
                 result.Should().BeEquivalentTo(dummyCircuitBreakerDetails);
             }
         }
@@ -91,7 +92,7 @@ namespace DFC.Digital.Tools.Service.Accounts.UnitTests
             var dummyCircuitBreakerDetails = new CircuitBreakerDetails() { CircuitBreakerStatus = CircuitBreakerStatus.Closed, HalfOpenRetryCount = 0, LastCircuitOpenDate = DateTime.Now };
 
             A.CallTo(() => fakeCircuitBreakerCommandRepository.Add(A<CircuitBreakerDetails>._)).DoesNothing();
-            A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExists(A<CircuitBreakerDetails>._)).Returns(recordExists);
+            A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExistsAsync(A<CircuitBreakerDetails>._)).Returns(recordExists);
 
             // Act
             var accountService = new AccountsService(fakeApplicationLogger, fakeConfiguration, fakeAccountQueryRepository, fakeAuditCommandRepository, fakeCircuitBreakerQueryRepository, fakeCircuitBreakerCommandRepository);
@@ -100,11 +101,11 @@ namespace DFC.Digital.Tools.Service.Accounts.UnitTests
             // Assert
             if (recordExists)
             {
-                A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExists(A<CircuitBreakerDetails>._)).MustHaveHappenedOnceExactly();
+                A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExistsAsync(A<CircuitBreakerDetails>._)).MustHaveHappenedOnceExactly();
             }
             else
             {
-                A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExists(A<CircuitBreakerDetails>._)).MustHaveHappenedTwiceExactly();
+                A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExistsAsync(A<CircuitBreakerDetails>._)).MustHaveHappenedTwiceExactly();
             }
         }
 
@@ -114,14 +115,14 @@ namespace DFC.Digital.Tools.Service.Accounts.UnitTests
             // Arrange
             SetupCalls();
             A.CallTo(() => fakeCircuitBreakerCommandRepository.Add(A<CircuitBreakerDetails>._)).DoesNothing();
-            A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExists(A<CircuitBreakerDetails>._)).Returns(true);
+            A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExistsAsync(A<CircuitBreakerDetails>._)).Returns(true);
 
             // Act
             var accountService = new AccountsService(fakeApplicationLogger, fakeConfiguration, fakeAccountQueryRepository, fakeAuditCommandRepository, fakeCircuitBreakerQueryRepository, fakeCircuitBreakerCommandRepository);
             var result = accountService.OpenCircuitBreakerAsync();
 
             // Assert
-            A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExists(A<CircuitBreakerDetails>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExistsAsync(A<CircuitBreakerDetails>._)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -130,14 +131,14 @@ namespace DFC.Digital.Tools.Service.Accounts.UnitTests
             // Arrange
             SetupCalls();
             A.CallTo(() => fakeCircuitBreakerCommandRepository.Add(A<CircuitBreakerDetails>._)).DoesNothing();
-            A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExists(A<CircuitBreakerDetails>._)).Returns(true);
+            A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExistsAsync(A<CircuitBreakerDetails>._)).Returns(true);
 
             // Act
             var accountService = new AccountsService(fakeApplicationLogger, fakeConfiguration, fakeAccountQueryRepository, fakeAuditCommandRepository, fakeCircuitBreakerQueryRepository, fakeCircuitBreakerCommandRepository);
             var result = accountService.CloseCircuitBreakerAsync();
 
             // Assert
-            A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExists(A<CircuitBreakerDetails>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExistsAsync(A<CircuitBreakerDetails>._)).MustHaveHappenedOnceExactly();
         }
 
         [Theory]
@@ -151,14 +152,14 @@ namespace DFC.Digital.Tools.Service.Accounts.UnitTests
             var dummyCircuitBreakerDetails = new CircuitBreakerDetails() { CircuitBreakerStatus = circuitBreakerStatus, HalfOpenRetryCount = 0, LastCircuitOpenDate = DateTime.Now };
 
             A.CallTo(() => fakeCircuitBreakerQueryRepository.GetBreakerDetails()).Returns(dummyCircuitBreakerDetails);
-            A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExists(A<CircuitBreakerDetails>._)).Returns(true);
+            A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExistsAsync(A<CircuitBreakerDetails>._)).Returns(true);
 
             // Act
             var accountService = new AccountsService(fakeApplicationLogger, fakeConfiguration, fakeAccountQueryRepository, fakeAuditCommandRepository, fakeCircuitBreakerQueryRepository, fakeCircuitBreakerCommandRepository);
             var result = accountService.HalfOpenCircuitBreakerAsync();
 
             // Assert
-            A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExists(A<CircuitBreakerDetails>._)).MustHaveHappened();
+            A.CallTo(() => fakeCircuitBreakerCommandRepository.UpdateIfExistsAsync(A<CircuitBreakerDetails>._)).MustHaveHappened();
 
             dummyCircuitBreakerDetails.CircuitBreakerStatus.Should().Be(CircuitBreakerStatus.HalfOpen);
 
@@ -173,7 +174,7 @@ namespace DFC.Digital.Tools.Service.Accounts.UnitTests
         {
             // Arrange
             SetupCalls();
-            A.CallTo(() => fakeAuditCommandRepository.Add(A<AccountNotificationAudit>._)).DoesNothing();
+            A.CallTo(() => fakeAuditCommandRepository.AddAsync(A<AccountNotificationAudit>._)).Returns(Task.CompletedTask);
 
             var dummyAudit = new AccountNotificationAudit();
 
@@ -182,7 +183,7 @@ namespace DFC.Digital.Tools.Service.Accounts.UnitTests
             var result = accountService.InsertAuditAsync(dummyAudit);
 
             // Assert
-            A.CallTo(() => fakeAuditCommandRepository.Add(dummyAudit)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeAuditCommandRepository.AddAsync(dummyAudit)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -190,7 +191,7 @@ namespace DFC.Digital.Tools.Service.Accounts.UnitTests
         {
             // Arrange
             SetupCalls();
-            A.CallTo(() => fakeAuditCommandRepository.SetBatchToCircuitGotBroken(A<IList<Account>>._)).DoesNothing();
+            A.CallTo(() => fakeAuditCommandRepository.SetBatchToCircuitGotBrokenAsync(A<IList<Account>>._)).Returns(Task.CompletedTask);
             IEnumerable<Account> fakeAccounts = A.Fake<IEnumerable<Account>>();
 
             // Act
@@ -198,7 +199,7 @@ namespace DFC.Digital.Tools.Service.Accounts.UnitTests
             var result = accountService.SetBatchToCircuitGotBrokenAsync(fakeAccounts);
 
             // Assert
-            A.CallTo(() => fakeAuditCommandRepository.SetBatchToCircuitGotBroken(A<IList<Account>>._)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeAuditCommandRepository.SetBatchToCircuitGotBrokenAsync(A<IList<Account>>._)).MustHaveHappenedOnceExactly();
         }
 
         private void SetupCalls()

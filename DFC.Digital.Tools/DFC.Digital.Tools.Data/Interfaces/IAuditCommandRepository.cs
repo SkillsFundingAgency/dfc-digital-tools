@@ -2,15 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace DFC.Digital.Tools.Data.Interfaces
 {
     public interface IAuditCommandRepository
     {
-        void Add(AccountNotificationAudit entity);
+        Task AddAsync(AccountNotificationAudit entity);
 
-        void SetBatchToProcessing(IList<Account> accounts);
+        Task SetBatchToProcessingAsync(IList<Account> accounts);
 
-        void SetBatchToCircuitGotBroken(IList<Account> accounts);
+        Task SetBatchToCircuitGotBrokenAsync(IList<Account> accounts);
     }
 }

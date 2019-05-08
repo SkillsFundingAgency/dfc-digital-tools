@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace DFC.Digital.Tools.Data.Interfaces
 {
@@ -9,6 +10,6 @@ namespace DFC.Digital.Tools.Data.Interfaces
     {
         void Add(CircuitBreakerDetails entity);
 
-        bool UpdateIfExists(CircuitBreakerDetails entity);
+        Task<bool> UpdateIfExistsAsync(CircuitBreakerDetails entity);
     }
 }

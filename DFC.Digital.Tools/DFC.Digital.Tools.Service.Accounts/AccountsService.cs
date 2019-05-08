@@ -55,34 +55,34 @@ namespace DFC.Digital.Tools.Service.Accounts
 
         public async Task UpdateCircuitBreakerAsync(CircuitBreakerDetails circuitBreakerDetails)
         {
-            var updated = circuitBreakerCommandRepository.UpdateIfExists(circuitBreakerDetails);
+            var updated = await circuitBreakerCommandRepository.UpdateIfExistsAsync(circuitBreakerDetails);
             if (!updated)
             {
                applicationLogger.Trace("Adding default circuit breaker record on update as one does not exist");
                AddDefaultCircuitBreaker();
-               circuitBreakerCommandRepository.UpdateIfExists(circuitBreakerDetails);
+               await circuitBreakerCommandRepository.UpdateIfExistsAsync(circuitBreakerDetails);
             }
         }
 
         public async Task<IEnumerable<Account>> GetNextBatchOfEmailsAsync(int batchSize)
         {
-            var nextBatch = accountQueryRepository.GetAccountsThatStillNeedProcessing(this.configuration.GetConfigSectionKey<DateTime>(Constants.AccountRepositorySection, Constants.CutOffDate)).Take(batchSize).ToList();
+           var nextBatch = accountQueryRepository.GetAccountsThatStillNeedProcessing(this.configuration.GetConfigSectionKey<DateTime>(Constants.AccountRepositorySection, Constants.CutOffDate)).Take(batchSize).ToList();
            applicationLogger.Trace($"Got {nextBatch.Count} records in batch from DB, about to set audit to processing for batch");
 
-           auditCommandRepository.SetBatchToProcessing(nextBatch);
+           await auditCommandRepository.SetBatchToProcessingAsync(nextBatch);
            applicationLogger.Trace($"Set {nextBatch.Count} records for batch to processing");
 
-            return nextBatch;
+           return nextBatch;
         }
 
         public async Task InsertAuditAsync(AccountNotificationAudit accountNotificationAudit)
         {
-          auditCommandRepository.Add(accountNotificationAudit);
+          await auditCommandRepository.AddAsync(accountNotificationAudit);
         }
 
         public async Task SetBatchToCircuitGotBrokenAsync(IEnumerable<Account> accounts)
         {
-          auditCommandRepository.SetBatchToCircuitGotBroken(accounts.ToList());
+           await auditCommandRepository.SetBatchToCircuitGotBrokenAsync(accounts.ToList());
         }
 
         public async Task OpenCircuitBreakerAsync()
