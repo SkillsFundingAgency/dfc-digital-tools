@@ -15,6 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functions", "Functions", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{73B84510-86EE-403C-A74B-8946A05780F9}"
 	ProjectSection(SolutionItems) = preProject
+		DatabaseTableScripts.sql = DatabaseTableScripts.sql
 		DFC.Digital.CodeAnalysis.ruleset = DFC.Digital.CodeAnalysis.ruleset
 		stylecop.json = stylecop.json
 	EndProjectSection
@@ -57,7 +58,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Service.G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Repository.Accounts.UnitTests", "DFC.Digital.Tools.Repository.Accounts.UnitTests\DFC.Digital.Tools.Repository.Accounts.UnitTests.csproj", "{747529E0-C228-4A2A-AFA6-3814C513942F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DFC.Digital.Tools.Service.Accounts.UnitTests", "DFC.Digital.Tools.Service.Accounts.UnitTests\DFC.Digital.Tools.Service.Accounts.UnitTests.csproj", "{9720A930-6E0C-4567-BD18-48A6CD931D94}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.Digital.Tools.Service.Accounts.UnitTests", "DFC.Digital.Tools.Service.Accounts.UnitTests\DFC.Digital.Tools.Service.Accounts.UnitTests.csproj", "{9720A930-6E0C-4567-BD18-48A6CD931D94}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
