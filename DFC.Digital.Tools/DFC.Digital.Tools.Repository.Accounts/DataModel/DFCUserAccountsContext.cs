@@ -42,9 +42,13 @@ namespace DFC.Digital.Tools.Repository.Accounts
                     .HasMaxLength(200)
                     .ValueGeneratedNever();
 
-                entity.Property(e => e.A1lifecycleStateUpin)
-                    .HasColumnName("A1LifecycleStateUPIN")
+                entity.Property(e => e.A1lifecycleState)
+                    .HasColumnName("A1LifecycleState")
                     .HasMaxLength(50);
+
+                entity.Property(e => e.UPIN)
+                   .HasColumnName("UPIN")
+                   .HasMaxLength(200);
 
                 entity.Property(e => e.Createtimestamp)
                     .HasColumnName("createtimestamp")

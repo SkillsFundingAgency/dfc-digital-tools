@@ -26,7 +26,7 @@ namespace DFC.Digital.Tools.Repository.Accounts
                            join a in accountsContext.Audit
                            on u.Mail equals a.Email into ua
                            from a in ua.DefaultIfEmpty()
-                           where (a == null || a.Status == NotificationProcessingStatus.CircuitGotBroken.ToString()) && u.Createtimestamp < cutOffDate && statesToGet.Contains(u.A1lifecycleStateUpin)
+                           where (a == null || a.Status == NotificationProcessingStatus.CircuitGotBroken.ToString()) && u.Createtimestamp < cutOffDate && statesToGet.Contains(u.A1lifecycleState)
                            select new Account
                            {
                                 Name = u.Name,

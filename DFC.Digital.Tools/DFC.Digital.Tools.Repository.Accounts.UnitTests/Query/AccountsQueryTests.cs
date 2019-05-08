@@ -33,10 +33,10 @@ namespace DFC.Digital.Tools.Repository.Accounts.UnitTests
 
             List<Accounts> testAccountTable = new List<Accounts>
             {
-                new Accounts { Name = "Well Before Date", Mail = "TestMail1@dummy.com", Uid = "TestMail1@dummy.com", A1lifecycleStateUpin = "ACTIVATED", Createtimestamp = cutOfDate.AddDays(-50) },
-                new Accounts { Name = "One Day Before Date", Mail = "TestMail2@dummy.com", Uid = "TestMail1@dummy.com", A1lifecycleStateUpin = "ACTIVATED", Createtimestamp = cutOfDate.AddDays(-1) },
-                new Accounts { Name = "On Cut Off Date", Mail = "TestMail3@dummy.com", Uid = "TestMail3@dummy.com", A1lifecycleStateUpin = "ACTIVATED", Createtimestamp = cutOfDate },
-                new Accounts { Name = "After Cut Off Daye", Mail = "TestMail4@dummy.com", Uid = "TestMail4@dummy.com", A1lifecycleStateUpin = "ACTIVATED", Createtimestamp = cutOfDate.AddDays(1) }
+                new Accounts { Name = "Well Before Date", Mail = "TestMail1@dummy.com", Uid = "TestMail1@dummy.com", A1lifecycleState = "ACTIVATED", Createtimestamp = cutOfDate.AddDays(-50) },
+                new Accounts { Name = "One Day Before Date", Mail = "TestMail2@dummy.com", Uid = "TestMail1@dummy.com", A1lifecycleState = "ACTIVATED", Createtimestamp = cutOfDate.AddDays(-1) },
+                new Accounts { Name = "On Cut Off Date", Mail = "TestMail3@dummy.com", Uid = "TestMail3@dummy.com", A1lifecycleState = "ACTIVATED", Createtimestamp = cutOfDate },
+                new Accounts { Name = "After Cut Off Daye", Mail = "TestMail4@dummy.com", Uid = "TestMail4@dummy.com", A1lifecycleState = "ACTIVATED", Createtimestamp = cutOfDate.AddDays(1) }
             };
             var fakeDbSet = Aef.FakeDbSet(testAccountTable);
             A.CallTo(() => fakeDbContext.Accounts).Returns(fakeDbSet);
@@ -56,11 +56,11 @@ namespace DFC.Digital.Tools.Repository.Accounts.UnitTests
 
             List<Accounts> testAccountTable = new List<Accounts>
             {
-                new Accounts { Name = "Not In Audit", Mail = "TestMail1@dummy.com", Uid = "TestMail1@dummy.com", A1lifecycleStateUpin = "ACTIVATED", Createtimestamp = cutOfDate },
-                new Accounts { Name = "In Audit - Processing", Mail = "TestMail2@dummy.com", Uid = "TestMail1@dummy.com", A1lifecycleStateUpin = "ACTIVATED", Createtimestamp = cutOfDate },
-                new Accounts { Name = "In Audit - Circuit Got Broken", Mail = "TestMail3@dummy.com", Uid = "TestMail3@dummy.com", A1lifecycleStateUpin = "ACTIVATED", Createtimestamp = cutOfDate },
-                new Accounts { Name = "In Audit - Failed", Mail = "TestMail4@dummy.com", Uid = "TestMail4@dummy.com", A1lifecycleStateUpin = "ACTIVATED", Createtimestamp = cutOfDate },
-                new Accounts { Name = "In Audit - Completed", Mail = "TestMail5@dummy.com", Uid = "TestMail5@dummy.com", A1lifecycleStateUpin = "ACTIVATED", Createtimestamp = cutOfDate }
+                new Accounts { Name = "Not In Audit", Mail = "TestMail1@dummy.com", Uid = "TestMail1@dummy.com", A1lifecycleState = "ACTIVATED", Createtimestamp = cutOfDate },
+                new Accounts { Name = "In Audit - Processing", Mail = "TestMail2@dummy.com", Uid = "TestMail1@dummy.com", A1lifecycleState = "ACTIVATED", Createtimestamp = cutOfDate },
+                new Accounts { Name = "In Audit - Circuit Got Broken", Mail = "TestMail3@dummy.com", Uid = "TestMail3@dummy.com", A1lifecycleState = "ACTIVATED", Createtimestamp = cutOfDate },
+                new Accounts { Name = "In Audit - Failed", Mail = "TestMail4@dummy.com", Uid = "TestMail4@dummy.com", A1lifecycleState = "ACTIVATED", Createtimestamp = cutOfDate },
+                new Accounts { Name = "In Audit - Completed", Mail = "TestMail5@dummy.com", Uid = "TestMail5@dummy.com", A1lifecycleState = "ACTIVATED", Createtimestamp = cutOfDate }
             };
             var fakeDbSet = Aef.FakeDbSet(testAccountTable);
             A.CallTo(() => fakeDbContext.Accounts).Returns(fakeDbSet);
@@ -87,10 +87,10 @@ namespace DFC.Digital.Tools.Repository.Accounts.UnitTests
 
             List<Accounts> testAccountTable = new List<Accounts>
             {
-                new Accounts { Name = "ACTIVATED", Mail = "TestMail1@dummy.com", Uid = "TestMail1@dummy.com", A1lifecycleStateUpin = "ACTIVATED", Createtimestamp = cutOfDate },
-                new Accounts { Name = "PENDINGACTIVATION", Mail = "TestMail2@dummy.com", Uid = "TestMail1@dummy.com", A1lifecycleStateUpin = "PENDINGACTIVATION", Createtimestamp = cutOfDate },
-                new Accounts { Name = "INITIAL", Mail = "TestMail3@dummy.com", Uid = "TestMail3@dummy.com", A1lifecycleStateUpin = "INITIAL", Createtimestamp = cutOfDate },
-                new Accounts { Name = "PENDINGRESET", Mail = "TestMail4@dummy.com", Uid = "TestMail4@dummy.com", A1lifecycleStateUpin = "PENDINGRESET", Createtimestamp = cutOfDate },
+                new Accounts { Name = "ACTIVATED", Mail = "TestMail1@dummy.com", Uid = "TestMail1@dummy.com", A1lifecycleState = "ACTIVATED", Createtimestamp = cutOfDate },
+                new Accounts { Name = "PENDINGACTIVATION", Mail = "TestMail2@dummy.com", Uid = "TestMail1@dummy.com", A1lifecycleState = "PENDINGACTIVATION", Createtimestamp = cutOfDate },
+                new Accounts { Name = "INITIAL", Mail = "TestMail3@dummy.com", Uid = "TestMail3@dummy.com", A1lifecycleState = "INITIAL", Createtimestamp = cutOfDate },
+                new Accounts { Name = "PENDINGRESET", Mail = "TestMail4@dummy.com", Uid = "TestMail4@dummy.com", A1lifecycleState = "PENDINGRESET", Createtimestamp = cutOfDate },
             };
             var fakeDbSet = Aef.FakeDbSet(testAccountTable);
             A.CallTo(() => fakeDbContext.Accounts).Returns(fakeDbSet);
@@ -109,7 +109,7 @@ namespace DFC.Digital.Tools.Repository.Accounts.UnitTests
             var cutOfDate = ConvertToDateTime("31-Oct-2018");
             List<Accounts> testAccountTable = new List<Accounts>
             {
-                new Accounts { Name = nameof(Accounts.Name), Mail = nameof(Accounts.Mail), Uid = nameof(Accounts.Name), A1lifecycleStateUpin = "ACTIVATED", Createtimestamp = cutOfDate.AddDays(-50) },
+                new Accounts { Name = nameof(Accounts.Name), Mail = nameof(Accounts.Mail), Uid = nameof(Accounts.Name), A1lifecycleState = "ACTIVATED", Createtimestamp = cutOfDate.AddDays(-50) },
             };
             var fakeDbSet = Aef.FakeDbSet(testAccountTable);
             A.CallTo(() => fakeDbContext.Accounts).Returns(fakeDbSet);

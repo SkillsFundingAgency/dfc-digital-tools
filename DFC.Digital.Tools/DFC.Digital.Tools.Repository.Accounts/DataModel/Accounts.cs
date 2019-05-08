@@ -9,7 +9,9 @@ namespace DFC.Digital.Tools.Repository.Accounts
 
         public string SfaProviderUserType { get; set; }
 
-        public string A1lifecycleStateUpin { get; set; }
+        public string A1lifecycleState { get; set; }
+
+        public string UPIN { get; set; }
 
         public DateTime Createtimestamp { get; set; }
 
