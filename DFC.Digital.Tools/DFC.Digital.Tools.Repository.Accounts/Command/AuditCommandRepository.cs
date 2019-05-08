@@ -20,7 +20,11 @@ namespace DFC.Digital.Tools.Repository.Accounts.Command
         public async Task AddAsync(AccountNotificationAudit accountNotificationAudit)
         {
             Audit audit = new Audit { Email = accountNotificationAudit.Email, Status = accountNotificationAudit.NotificationProcessingStatus.ToString() };
-            audit.Notes = accountNotificationAudit.Note?.Length <= 5000 ? accountNotificationAudit.Note : accountNotificationAudit.Note.Substring(0, 4999);
+            if (!string.IsNullOrEmpty(accountNotificationAudit.Note))
+            {
+                audit.Notes = accountNotificationAudit.Note.Length <= 5000 ? accountNotificationAudit.Note : accountNotificationAudit.Note.Substring(0, 4999);
+            }
+
             accountsContext.Audit.Add(audit);
             await accountsContext.SaveChangesAsync();
         }
