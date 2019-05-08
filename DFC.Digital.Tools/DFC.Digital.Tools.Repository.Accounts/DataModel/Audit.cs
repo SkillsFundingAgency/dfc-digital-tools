@@ -13,6 +13,6 @@ namespace DFC.Digital.Tools.Repository.Accounts
 
         public string Notes { get; set; }
 
-        public byte[] TimeStamp { get; set; }
+        public DateTime? TimeStamp { get; set; }
     }
 }
