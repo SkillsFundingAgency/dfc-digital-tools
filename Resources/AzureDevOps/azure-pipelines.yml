@@ -1,7 +1,7 @@
 # dotnet core build
 
 variables:
-  SolutionName: ''
+  SolutionName: 'DFC.Digital.Tools'
   BuildPlatform: 'any cpu'
   BuildConfiguration: 'release'
 
