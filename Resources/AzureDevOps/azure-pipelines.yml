@@ -1,6 +1,7 @@
 # dotnet core build
 
 variables:
+  SolutionName: ''
   BuildPlatform: 'any cpu'
   BuildConfiguration: 'release'
 
@@ -49,3 +50,9 @@ steps:
     arguments: '--output $(Build.ArtifactStagingDirectory)'
     publishWebProjects: false
     zipAfterPublish: false
+
+- task: PublishBuildArtifacts@1
+  displayName: Publish Artifact
+  inputs:
+     pathtoPublish: $(Build.ArtifactStagingDirectory)
+     artifactName: ${{ variables.SolutionName }}
