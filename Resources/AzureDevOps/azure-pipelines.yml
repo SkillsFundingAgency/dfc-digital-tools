@@ -14,7 +14,7 @@ steps:
     command: restore
     projects: '**/*.csproj'
     feedsToUse: config
-    nugetConfigPath: DFC.Digital.Tools\.nuget\NuGet.config
+    nugetConfigPath: ${{ variables.SolutionName }}\.nuget\NuGet.config
 
 # build
 - task: DotNetCoreCLI@2
@@ -32,20 +32,12 @@ steps:
     projects: '**/*.csproj'
     configuration: ${{ variables.buildConfiguration }}
 
-- task: PublishTestResults@2
-  displayName: Publishing test results
-  condition: succeededOrFailed()
-  inputs:
-    testRunner: VSTest
-    testResultsFiles: '**/*.trx'
-
 # publish
-# - script:  dotnet publish --configuration ${{ variables.buildConfiguration }} --output $BUILD_ARTIFACTSTAGINGDIRECTORY ${{ variables.projectFile }}
 - task: DotNetCoreCLI@2
   displayName: dotnet publish
   inputs:
     command: publish
-    projects: 'DFC.Digital.Tools\DFC.Digital.Tools.AzureFunctions/DFC.Digital.Tools.AzureFunctions.csproj'
+    projects: '${{ variables.SolutionName }}\DFC.Digital.Tools.AzureFunctions/DFC.Digital.Tools.AzureFunctions.csproj'
     configuration: ${{ variables.buildConfiguration }}
     arguments: '--output $(Build.ArtifactStagingDirectory)'
     publishWebProjects: false
@@ -54,5 +46,5 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: Publish Artifact
   inputs:
-     pathtoPublish: $(Build.ArtifactStagingDirectory)
+     pathtoPublish: '$(Build.ArtifactStagingDirectory)\DFC.Digital.Tools.AzureFunctions'
      artifactName: ${{ variables.SolutionName }}
