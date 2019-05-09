@@ -1,30 +1,34 @@
 # dotnet core build
 
 variables:
-  projectFile: 'DFC.Digital.Tools/DFC.Digital.Tools.sln'
   BuildPlatform: 'any cpu'
   BuildConfiguration: 'release'
 
 steps:
 
 # restore
-#- task: NuGetToolInstaller@0
-#  displayName: 'Use NuGet 4.3.0'
-#
-#- task: NuGetCommand@2
-#  displayName: 'NuGet restore ${{ variables.projectFile }}'
-#  inputs:
-#    restoreSolution: ${{ variables.projectFile }}
+- task: DotNetCoreCLI@2
+  displayName: dotnet restore
+  inputs:
+    command: restore
+    projects: '**/*.csproj'
 
 # build
-- script:  dotnet build --configuration ${{ variables.buildConfiguration }} ${{ variables.projectFile }}
+- task: DotNetCoreCLI@2
   displayName: dotnet build
+  inputs:
+    command: build
+    projects: '**/*.csproj'
+    configuration: ${{ variables.buildConfiguration }}
 
-# test
-- script:  dotnet test --configuration ${{ variables.buildConfiguration }} --logger trx ${{ variables.projectFile }}
+# test and publish
+- task: DotNetCoreCLI@2
   displayName: dotnet test
+  inputs:
+    command: test
+    projects: '**/*.csproj'
+    configuration: ${{ variables.buildConfiguration }}
 
-# publish test results
 - task: PublishTestResults@2
   displayName: Publishing test results
   condition: succeededOrFailed()
@@ -33,5 +37,13 @@ steps:
     testResultsFiles: '**/*.trx'
 
 # publish
-- script:  dotnet publish --configuration ${{ variables.buildConfiguration }} --output $BUILD_ARTIFACTSTAGINGDIRECTORY ${{ variables.projectFile }}
+# - script:  dotnet publish --configuration ${{ variables.buildConfiguration }} --output $BUILD_ARTIFACTSTAGINGDIRECTORY ${{ variables.projectFile }}
+- task: DotNetCoreCLI@2
   displayName: dotnet publish
+  inputs:
+    command: publish
+    projects: 'DFC.Digital.Tools\DFC.Digital.Tools.AzureFunctions/DFC.Digital.Tools.AzureFunctions.csproj'
+    configuration: ${{ variables.buildConfiguration }}
+    arguments: '--output $(Build.ArtifactStagingDirectory)'
+    publishWebProjects: false
+    zipAfterPublish: false
