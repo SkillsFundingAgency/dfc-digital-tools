@@ -160,6 +160,9 @@ namespace DFC.Digital.Tools.Function.EmailNotification.UnitTests
             A.CallTo(() => fakeConfiguration.GetConfigSectionKey<int>(A<string>._, A<string>._))
                 .Returns(halfOpenRetryMax);
 
+            //For this test the function call is not diasbled in the config.
+            A.CallTo(() => fakeConfiguration.GetConfigSectionKey<bool>(A<string>._, A<string>._)).Returns(false);
+
             // Assign
             var emailProcessor = new EmailNotificationProcessor(fakeSendCitizenNotificationService, fakeApplicationLogger, fakeConfiguration, fakeAccountsService);
 
@@ -223,6 +226,22 @@ namespace DFC.Digital.Tools.Function.EmailNotification.UnitTests
                 A.CallTo(() => fakeAccountsService.GetNextBatchOfEmailsAsync(A<int>._)).MustNotHaveHappened();
                 A.CallTo(() => fakeSendCitizenNotificationService.SendCitizenNotificationAsync(A<Account>._)).MustNotHaveHappened();
             }
+        }
+
+        [Fact]
+        public async Task ProcessEmailNotificationsAsyncDisabledTests()
+        {
+            //For this test the function call is not diasbled in the config.
+            A.CallTo(() => fakeConfiguration.GetConfigSectionKey<bool>(A<string>._, A<string>._)).Returns(true);
+
+            // Assign
+            var emailProcessor = new EmailNotificationProcessor(fakeSendCitizenNotificationService, fakeApplicationLogger, fakeConfiguration, fakeAccountsService);
+
+            // Act
+            await emailProcessor.ProcessEmailNotificationsAsync();
+
+            //Assert
+            A.CallTo(() => fakeAccountsService.GetNextBatchOfEmailsAsync(A<int>._)).MustNotHaveHappened();
         }
 
         private static IEnumerable<Account> GetAccountsToProcess(int batchSize)

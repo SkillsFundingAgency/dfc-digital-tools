@@ -28,6 +28,18 @@ namespace DFC.Digital.Tools.Function.EmailNotification
 
         public async Task ProcessEmailNotificationsAsync()
         {
+            if (configuration.GetConfigSectionKey<bool>(Constants.GovUkNotifySection, Constants.IsDisabled))
+            {
+                applicationLogger.Trace($"Function is disabled in settings - Existing");
+            }
+            else
+            {
+                await SendNextBatchOfEmailsAsync();
+            }
+        }
+
+        private async Task SendNextBatchOfEmailsAsync()
+        {
             var circuitBreaker = await accountsService.GetCircuitBreakerStatusAsync();
 
             if (circuitBreaker.CircuitBreakerStatus != CircuitBreakerStatus.Open)

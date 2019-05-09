@@ -16,7 +16,7 @@ namespace DFC.Digital.Tools.AzureFunctions
         /// <param name="log">The log.</param>
         /// <returns>N/A</returns>
         [FunctionName("ProcessEmailNotificationsFunction")]
-        public static async Task Run([TimerTrigger("0 * * ? * * *")]TimerInfo myTimer, ILogger log)
+        public static async Task Run([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, ILogger log)
         {
             Function.Common.ConfigureLog.ConfigureNLogWithAppInsightsTarget();
             log.LogInformation($"{nameof(ProcessEmailNotificationsFunction)} Timer trigger function executed at: {DateTime.Now}");
