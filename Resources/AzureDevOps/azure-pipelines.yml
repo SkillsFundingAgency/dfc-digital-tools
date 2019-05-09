@@ -8,13 +8,13 @@ variables:
 steps:
 
 # restore
-- task: NuGetToolInstaller@0
-  displayName: 'Use NuGet 4.3.0'
-
-- task: NuGetCommand@2
-  displayName: 'NuGet restore ${{ variables.projectFile }}'
-  inputs:
-    restoreSolution: ${{ variables.projectFile }}
+#- task: NuGetToolInstaller@0
+#  displayName: 'Use NuGet 4.3.0'
+#
+#- task: NuGetCommand@2
+#  displayName: 'NuGet restore ${{ variables.projectFile }}'
+#  inputs:
+#    restoreSolution: ${{ variables.projectFile }}
 
 # build
 - script:  dotnet build --configuration ${{ variables.buildConfiguration }} ${{ variables.projectFile }}
