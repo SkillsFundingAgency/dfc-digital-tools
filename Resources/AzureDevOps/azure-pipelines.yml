@@ -14,7 +14,7 @@ steps:
     command: restore
     projects: '**/*.csproj'
     feedsToUse: config
-    nugetConfigPath: ${{ variables.SolutionName }}\.nuget\NuGet.config
+    nugetConfigPath: DFC.Digital.Tools\.nuget\NuGet.config
 
 # build
 - task: DotNetCoreCLI@2
@@ -23,7 +23,6 @@ steps:
     command: build
     projects: '**/*.csproj'
     configuration: ${{ variables.buildConfiguration }}
-    verbosity: detailed
 
 # test and publish
 - task: DotNetCoreCLI@2
