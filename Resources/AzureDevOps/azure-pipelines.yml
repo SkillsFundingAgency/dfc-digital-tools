@@ -12,6 +12,8 @@ steps:
   inputs:
     command: restore
     projects: '**/*.csproj'
+    feedsToUse: config
+    nugetConfigPath: DFC.Digital.Tools\.nuget\NuGet.config
 
 # build
 - task: DotNetCoreCLI@2
