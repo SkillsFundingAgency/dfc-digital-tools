@@ -23,6 +23,7 @@ steps:
     command: build
     projects: '**/*.csproj'
     configuration: ${{ variables.buildConfiguration }}
+    verbosity: detailed
 
 # test and publish
 - task: DotNetCoreCLI@2
