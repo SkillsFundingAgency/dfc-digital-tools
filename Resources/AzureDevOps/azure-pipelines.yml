@@ -1,0 +1,32 @@
+# dotnet core build
+
+variables:
+  projectFile: 'DFC.Digital.Tools/DFC.Digital.Tools.sln'
+  BuildPlatform: 'any cpu'
+  BuildConfiguration: 'release'
+
+steps:
+
+# restore
+- script: dotnet restore ${{ variables.projectFile }}
+  displayName: dotnet restore
+
+# build
+- script:  dotnet build --configuration ${{ variables.buildConfiguration }} ${{ variables.projectFile }}
+  displayName: dotnet build
+
+# test
+- script:  dotnet test --configuration ${{ variables.buildConfiguration }} --logger trx ${{ variables.projectFile }}
+  displayName: dotnet test
+
+# publish test results
+- task: PublishTestResults@2
+  displayName: Publishing test results
+  condition: succeededOrFailed()
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: '**/*.trx'
+
+# publish
+- script:  dotnet publish --configuration ${{ variables.buildConfiguration }} --output $BUILD_ARTIFACTSTAGINGDIRECTORY ${{ variables.projectFile }}
+  displayName: dotnet publish
