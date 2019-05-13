@@ -50,6 +50,7 @@ steps:
     command: build
     projects: '**/*.csproj'
     configuration: ${{ variables.buildConfiguration }}
+    arguments: '--verbosity detailed'
 
 # test and publish
 - task: DotNetCoreCLI@2
