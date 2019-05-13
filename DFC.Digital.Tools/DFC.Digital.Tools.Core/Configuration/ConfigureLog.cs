@@ -1,23 +1,17 @@
 ﻿using DFC.Digital.Tools.Core;
+using DFC.Digital.Tools.Data.Interfaces;
 using Microsoft.ApplicationInsights.NLogTarget;
-using Microsoft.Extensions.Configuration;
 using NLog;
 using NLog.Config;
 using System.IO;
 
-namespace DFC.Digital.Tools.Function.Common
+namespace DFC.Digital.Tools.Core
 {
     public static class ConfigureLog
     {
-        public static void ConfigureNLogWithAppInsightsTarget()
+        public static void ConfigureNLogWithAppInsightsTarget(IConfigConfigurationProvider configProvider)
         {
-            // TO BE fIXED
-            IConfiguration configuration = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", true, true)
-                .Build();
-
-            var appInsightsKey = configuration[Constants.ApplicationInsightsInstrumentationKey];
+            var appInsightsKey = configProvider.GetConfig<string>(Constants.ApplicationInsightsInstrumentationKey);
             if (!string.IsNullOrEmpty(appInsightsKey))
             {
                 var config = new LoggingConfiguration();

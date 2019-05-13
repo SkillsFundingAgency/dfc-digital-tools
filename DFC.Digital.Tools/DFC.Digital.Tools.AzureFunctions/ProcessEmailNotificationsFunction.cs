@@ -14,14 +14,14 @@ namespace DFC.Digital.Tools.AzureFunctions
         /// </summary>
         /// <param name="myTimer">My timer.</param>
         /// <param name="log">The log.</param>
+        /// <param name="context">Execution context of the funtion</param>
         /// <returns>N/A</returns>
         [FunctionName("ProcessEmailNotificationsFunction")]
-        public static async Task Run([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, ILogger log)
+        public static async Task Run([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, ILogger log, ExecutionContext context)
         {
-            Function.Common.ConfigureLog.ConfigureNLogWithAppInsightsTarget();
             log.LogInformation($"{nameof(ProcessEmailNotificationsFunction)} Timer trigger function executed at: {DateTime.Now}");
 
-            await Startup.RunAsync(RunMode.Azure);
+            await Startup.RunAsync(RunMode.Azure, context.FunctionAppDirectory);
 
             log.LogInformation($"{nameof(ProcessEmailNotificationsFunction)} function completed at: {DateTime.Now}");
         }

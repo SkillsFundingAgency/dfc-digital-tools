@@ -1,5 +1,6 @@
 ﻿using DFC.Digital.Tools.Core;
 using System;
+using System.IO;
 using System.Reflection;
 using ConsoleOld = System.Console;
 
@@ -12,7 +13,7 @@ namespace DFC.Digital.Tools.Function.EmailNotification.Console
             ConsoleOld.WriteLine("=================THE BEGINNING==============");
             try
             {
-                Startup.RunAsync(RunMode.Console).GetAwaiter().GetResult();
+                Startup.RunAsync(RunMode.Console, Directory.GetCurrentDirectory()).GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
