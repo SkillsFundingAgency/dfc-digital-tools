@@ -1,6 +1,7 @@
 # dotnet core build
 
 variables:
+  SolutionName: 'DFC.Digital.Tools'
   BuildPlatform: 'any cpu'
   BuildConfiguration: 'release'
 
@@ -63,7 +64,7 @@ steps:
   displayName: dotnet publish
   inputs:
     command: publish
-    projects: '${{ variables.SolutionName }}\DFC.Digital.Tools.AzureFunctions/DFC.Digital.Tools.AzureFunctions.csproj'
+    projects: '${{ variables.SolutionName }}\DFC.Digital.Tools.AzureFunctions\DFC.Digital.Tools.AzureFunctions.csproj'
     configuration: ${{ variables.buildConfiguration }}
     arguments: '--output $(Build.ArtifactStagingDirectory)'
     publishWebProjects: false
@@ -74,4 +75,4 @@ steps:
   displayName: Publish Artifact
   inputs:
      pathtoPublish: $(Build.ArtifactStagingDirectory)
-     artifactName: Dfc.Digital.Tools
+     artifactName: ${{ variables.SolutionName }}
