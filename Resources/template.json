@@ -21,7 +21,25 @@
       }
     },
     "storageConnectionString": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Connection string for the storage account to store function app files"
+      }
+    },
+    "govNotifyApiKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Gov Notify API Key"
+      }
+    },
+    "govNotifyTemplateId": {
       "type": "string",
+      "metadata": {
+        "description": "Gov Notify template ID"
+      }
+    },
+    "sqlConnectionString": {
+      "type": "securestring",
       "metadata": {
         "description": "Connection string for the storage account to store function app files"
       }
@@ -91,6 +109,38 @@
               {
                 "name": "AzureWebJobsStorage",
                 "value": "[parameters('storageConnectionString')]"
+              },
+              {
+                "name": "GovUkNotify__DFC.Tools.GovUkNotifyAPIKey",
+                "value": "[parameters('govNotifyApiKey')]"
+              },
+              {
+                "name": "GovUkNotify__DFC.Digital.Tools.GovUkNotifyTemplateId",
+                "value": "[parameters('govNotifyTemplateId')]"
+              },
+              {
+                "name": "GovUkNotify__DFC.Digital.Tools.GovUkNotifyRateLimitException",
+                "value": "status code 429"
+              },
+              {
+                "name": "GovUkNotify__DFC.Digital.Tools.GovUkNotifyRetryCount",
+                "value": 5
+              },
+              {
+                "name": "GovUkNotify__DFC.Digital.Tools.IsDisabled",
+                "value": true
+              },
+              {
+                "name": "AccountRepository__DFC.Digital.Tools.SQLConnection",
+                "value": "[parameters('sqlConnectionString')]"
+              },
+              {
+                "name": "AccountRepository__DFC.Digital.Tools.BatchSize",
+                "value": "150"
+              },
+              {
+                "name": "AccountRepository__DFC.Digital.Tools.CutOffDate",
+                "value": "01-Nov-2018"
               }
             ]
           },
