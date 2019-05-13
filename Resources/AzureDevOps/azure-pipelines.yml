@@ -1,6 +1,7 @@
 # dotnet core build
 
 variables:
+  SolutionName: 'DFC.Digital.Tools'
   BuildPlatform: 'any cpu'
   BuildConfiguration: 'release'
 
@@ -33,11 +34,45 @@ steps:
   parameters:
     ArmTemplateRoot: '$(System.DefaultWorkingDirectory)\Resources'
 
-# TODO: Add build steps
+# restore
+- task: DotNetCoreCLI@2
+  displayName: dotnet restore
+  inputs:
+    command: restore
+    projects: '**/*.csproj'
+    feedsToUse: config
+    nugetConfigPath: DFC.Digital.Tools\.nuget\NuGet.config
 
-# Publish files
+# build
+- task: DotNetCoreCLI@2
+  displayName: dotnet build
+  inputs:
+    command: build
+    projects: '**/*.csproj'
+    configuration: ${{ variables.buildConfiguration }}
+
+# test and publish
+- task: DotNetCoreCLI@2
+  displayName: dotnet test
+  inputs:
+    command: test
+    projects: '**/*.csproj'
+    configuration: ${{ variables.buildConfiguration }}
+
+# publish
+- task: DotNetCoreCLI@2
+  displayName: dotnet publish
+  inputs:
+    command: publish
+    projects: '${{ variables.SolutionName }}\DFC.Digital.Tools.AzureFunctions\DFC.Digital.Tools.AzureFunctions.csproj'
+    configuration: ${{ variables.buildConfiguration }}
+    arguments: '--output $(Build.ArtifactStagingDirectory)'
+    publishWebProjects: false
+    zipAfterPublish: true
+
+# Create artefact
 - task: PublishBuildArtifacts@1
   displayName: Publish Artifact
   inputs:
      pathtoPublish: $(Build.ArtifactStagingDirectory)
-     artifactName: Dfc.Digital.Tools
+     artifactName: ${{ variables.SolutionName }}
