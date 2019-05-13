@@ -10,8 +10,8 @@ namespace DFC.Digital.Tools.Data.Interfaces
 
         T GetConfig<T>(string key, T defaultValue);
 
-        T GetConfigSectionKey<T>(string section, string key);
-
         void Add<T>(string key, T value);
+
+        string GetConnectionString(string connectionStringName);
     }
 }

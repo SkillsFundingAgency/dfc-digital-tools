@@ -131,7 +131,7 @@ namespace DFC.Digital.Tools.Service.GovUkNotify.UnitTests
                 A.CallTo(() => fakeGovUkNotifyClient.SendEmail(A<string>._, A<string>._, A<string>._, A<Dictionary<string, dynamic>>._)).Returns(emailResponse);
             }
 
-            A.CallTo(() => fakeConfiguration.GetConfigSectionKey<string>(A<string>._, A<string>._)).Returns(isRateLimitException ? nameof(NotifyClientException).ToLowerInvariant() : "test");
+            A.CallTo(() => fakeConfiguration.GetConfig<string>(A<string>._)).Returns(isRateLimitException ? nameof(NotifyClientException).ToLowerInvariant() : "test");
 
             //Act
             var govUkNotifyService = new GovUkNotifyService(fakeApplicationLogger, fakeGovUkNotifyClient, fakeConfiguration, fakeAccountsService);

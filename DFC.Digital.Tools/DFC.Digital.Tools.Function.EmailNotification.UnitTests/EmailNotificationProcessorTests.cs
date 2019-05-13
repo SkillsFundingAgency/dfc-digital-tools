@@ -157,11 +157,11 @@ namespace DFC.Digital.Tools.Function.EmailNotification.UnitTests
                 A.CallTo(() => fakeSendCitizenNotificationService.SendCitizenNotificationAsync(A<Account>._)).Returns(sendNotificationResponse);
             }
 
-            A.CallTo(() => fakeConfiguration.GetConfigSectionKey<int>(A<string>._, A<string>._))
+            A.CallTo(() => fakeConfiguration.GetConfig<int>(A<string>._))
                 .Returns(halfOpenRetryMax);
 
             //For this test the function call is not diasbled in the config.
-            A.CallTo(() => fakeConfiguration.GetConfigSectionKey<bool>(A<string>._, A<string>._)).Returns(false);
+            A.CallTo(() => fakeConfiguration.GetConfig<bool>(A<string>._)).Returns(false);
 
             // Assign
             var emailProcessor = new EmailNotificationProcessor(fakeSendCitizenNotificationService, fakeApplicationLogger, fakeConfiguration, fakeAccountsService);
@@ -232,7 +232,7 @@ namespace DFC.Digital.Tools.Function.EmailNotification.UnitTests
         public async Task ProcessEmailNotificationsAsyncDisabledTests()
         {
             //For this test the function call is not diasbled in the config.
-            A.CallTo(() => fakeConfiguration.GetConfigSectionKey<bool>(A<string>._, A<string>._)).Returns(true);
+            A.CallTo(() => fakeConfiguration.GetConfig<bool>(A<string>._)).Returns(true);
 
             // Assign
             var emailProcessor = new EmailNotificationProcessor(fakeSendCitizenNotificationService, fakeApplicationLogger, fakeConfiguration, fakeAccountsService);

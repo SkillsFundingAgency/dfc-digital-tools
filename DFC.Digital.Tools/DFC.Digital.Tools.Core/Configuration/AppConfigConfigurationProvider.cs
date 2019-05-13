@@ -24,16 +24,15 @@ namespace DFC.Digital.Tools.Core
             return (T)Convert.ChangeType(value, typeof(T));
         }
 
-        public T GetConfigSectionKey<T>(string section, string key)
-        {
-            var value = this.configuration.GetSection(section)[key];
-            return (T)Convert.ChangeType(value, typeof(T));
-        }
-
         public T GetConfig<T>(string key, T defaultValue)
         {
             var value = this.configuration[key];
             return value == null ? defaultValue : (T)Convert.ChangeType(value, typeof(T));
+        }
+
+        public string GetConnectionString(string connectionStringName)
+        {
+            return configuration.GetConnectionString(connectionStringName);
         }
     }
 }

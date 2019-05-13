@@ -66,7 +66,7 @@ namespace DFC.Digital.Tools.Service.Accounts
 
         public async Task<IEnumerable<Account>> GetNextBatchOfEmailsAsync(int batchSize)
         {
-           var nextBatch = accountQueryRepository.GetAccountsThatStillNeedProcessing(this.configuration.GetConfigSectionKey<DateTime>(Constants.AccountRepositorySection, Constants.CutOffDate)).Take(batchSize).ToList();
+           var nextBatch = accountQueryRepository.GetAccountsThatStillNeedProcessing(this.configuration.GetConfig<DateTime>(Constants.CutOffDate)).Take(batchSize).ToList();
            applicationLogger.Trace($"Got {nextBatch.Count} records in batch from DB, about to set audit to processing for batch");
 
            await auditCommandRepository.SetBatchToProcessingAsync(nextBatch);

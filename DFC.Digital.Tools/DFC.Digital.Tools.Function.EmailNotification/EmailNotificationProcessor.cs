@@ -28,12 +28,14 @@ namespace DFC.Digital.Tools.Function.EmailNotification
 
         public async Task ProcessEmailNotificationsAsync()
         {
-            if (configuration.GetConfigSectionKey<bool>(Constants.GovUkNotifySection, Constants.IsDisabled))
+            if (configuration.GetConfig<bool>(Constants.IsDisabled))
             {
-                applicationLogger.Trace($"Function is disabled in settings - Existing");
+                applicationLogger.Trace($"Function is disabled in settings - Not sending any emails.");
             }
             else
             {
+                applicationLogger.Trace($"Function is enabled in settings - sending next batch of emails");
+
                 await SendNextBatchOfEmailsAsync();
             }
         }
@@ -44,14 +46,14 @@ namespace DFC.Digital.Tools.Function.EmailNotification
 
             if (circuitBreaker.CircuitBreakerStatus != CircuitBreakerStatus.Open)
             {
-                var batchSize = configuration.GetConfigSectionKey<int>(Constants.AccountRepositorySection, Constants.BatchSize);
+                var batchSize = configuration.GetConfig<int>(Constants.BatchSize);
 
                 var emailBatch = await accountsService.GetNextBatchOfEmailsAsync(batchSize);
 
                 var accountsToProcess = emailBatch.ToList();
                 applicationLogger.Trace($"About to process email notifications with a batch size of {accountsToProcess.Count}");
 
-                var halfOpenCountAllowed = configuration.GetConfigSectionKey<int>(Constants.GovUkNotifySection, Constants.GovUkNotifyRetryCount);
+                var halfOpenCountAllowed = configuration.GetConfig<int>(Constants.GovUkNotifyRetryCount);
 
                 foreach (var account in accountsToProcess)
                 {

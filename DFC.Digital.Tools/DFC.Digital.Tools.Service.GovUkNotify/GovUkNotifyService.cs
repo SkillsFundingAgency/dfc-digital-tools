@@ -29,12 +29,10 @@ namespace DFC.Digital.Tools.Service.GovUkNotify
             try
             {
                 var response = clientProxy.SendEmail(
-                    configuration.GetConfigSectionKey<string>(
-                        Constants.GovUkNotifySection,
+                    configuration.GetConfig<string>(
                         Constants.GovUkNotifyApiKey),
                     notification.EMail,
-                    configuration.GetConfigSectionKey<string>(
-                        Constants.GovUkNotifySection,
+                    configuration.GetConfig<string>(
                         Constants.GovUkNotifyTemplateId),
                     Convert(GetGovUkNotifyPersonalisation(notification)));
 
@@ -43,8 +41,7 @@ namespace DFC.Digital.Tools.Service.GovUkNotify
             catch (NotifyClientException ex)
             {
                 if (ex.Message.ToLowerInvariant()
-                    .Contains(configuration.GetConfigSectionKey<string>(
-                        Constants.GovUkNotifySection,
+                    .Contains(configuration.GetConfig<string>(
                         Constants.GovUkNotifyRateLimitException)))
                 {
                     sendNotificationResponse.RateLimitException = true;
