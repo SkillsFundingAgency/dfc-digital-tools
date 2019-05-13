@@ -68,7 +68,7 @@ steps:
     configuration: ${{ variables.buildConfiguration }}
     arguments: '--output $(Build.ArtifactStagingDirectory)'
     publishWebProjects: false
-    zipAfterPublish: false
+    zipAfterPublish: true
 
 # Create artefact
 - task: PublishBuildArtifacts@1
