@@ -1,0 +1,43 @@
+# dotnet core build
+
+variables:
+  BuildPlatform: 'any cpu'
+  BuildConfiguration: 'release'
+
+resources:
+  repositories:
+  - repository: self
+  - repository: dfc-devops
+    type: github
+    name: SkillsFundingAgency/dfc-devops
+    endpoint: 'GitHub (ESFA)'
+    ref: refs/tags/v1.2.0
+
+trigger:
+  batch: true
+  branches:
+    include:
+    - dev
+    - master
+
+pr:
+  branches:
+    include:
+    - dev
+    - master
+
+steps:
+
+# ARM template
+- template: AzureDevOpsTemplates/Build/dfc-arm-build.yml@dfc-devops
+  parameters:
+    ArmTemplateRoot: '$(System.DefaultWorkingDirectory)\Resources'
+
+# TODO: Add build steps
+
+# Publish files
+- task: PublishBuildArtifacts@1
+  displayName: Publish Artifact
+  inputs:
+     pathtoPublish: $(Build.ArtifactStagingDirectory)
+     artifactName: Dfc.Digital.Tools
