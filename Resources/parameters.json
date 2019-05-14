@@ -15,13 +15,13 @@
       "value": "__storageConnectionStr__"
     },
     "govNotifyApiKey": {
-      "value": "__govNotifyApiKey__"
+      "value": "__govUkNotifyApiKey__"
     },
     "govNotifyTemplateId": {
-      "value": "__govNotifyTemplateId__"
+      "value": "__govUkNotifyEmailTemplateId__"
     },
     "sqlConnectionString": {
-      "value": "__sqlConnectionString__"
+      "value": "__userDbSqlConnectionString__"
     }
   }
 }
