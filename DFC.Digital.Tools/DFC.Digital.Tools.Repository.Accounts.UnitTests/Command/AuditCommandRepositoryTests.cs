@@ -60,13 +60,21 @@ namespace DFC.Digital.Tools.Repository.Accounts.UnitTests
         {
             // Setup
             var accounts = SetUpTestAccounts();
+            var account1 = accounts.FirstOrDefault();
+            var account2 = accounts.TakeLast(1).FirstOrDefault();
 
             // Act
-           repo.SetBatchToProcessingAsync(accounts).Wait();
+            repo.SetBatchToProcessingAsync(accounts).Wait();
+           repo.AddAsync(new AccountNotificationAudit() { Email = account1.EMail, NotificationProcessingStatus = NotificationProcessingStatus.Failed }).Wait();
+
            repo.SetBatchToCircuitGotBrokenAsync(accounts).Wait();
 
             // Asserts
-           CheckExpectedResults(accounts, NotificationProcessingStatus.CircuitGotBroken.ToString());
+            testAuditTable.Count().Should().Be(3);
+
+            testAuditTable.Where(a => a.Email == account1.EMail && a.Status == NotificationProcessingStatus.Failed.ToString()).FirstOrDefault().Should().NotBeNull();
+
+            testAuditTable.Where(a => a.Status == NotificationProcessingStatus.CircuitGotBroken.ToString()).Count().Should().Be(2);
         }
 
         private void CheckExpectedResults(List<Account> accounts, string expectedStatus)
