@@ -42,7 +42,7 @@ namespace DFC.Digital.Tools.Repository.Accounts.Command
 
         public async Task SetBatchToCircuitGotBrokenAsync(IList<Account> accounts)
         {
-            var audits = accountsContext.Audit.Where(b => accounts.Any(a => a.EMail.Contains(b.Email))).ToList();
+            var audits = accountsContext.Audit.Where(b => accounts.Any(a => a.EMail.Contains(b.Email)) && b.Status == NotificationProcessingStatus.InProgress.ToString()).ToList();
             audits.ForEach(a => a.Status = NotificationProcessingStatus.CircuitGotBroken.ToString());
             await accountsContext.SaveChangesAsync();
         }

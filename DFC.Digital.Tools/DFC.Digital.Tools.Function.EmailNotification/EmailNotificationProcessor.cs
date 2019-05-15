@@ -105,6 +105,7 @@ namespace DFC.Digital.Tools.Function.EmailNotification
                         {
                             await accountsService.OpenCircuitBreakerAsync();
 
+                            //Set the all the accountsin the batch that did not get processed (sent ok)  to CircuitGotBroken
                             await accountsService.SetBatchToCircuitGotBrokenAsync(
                                 accountsToProcess.Where(notification => !notification.Processed));
                             break;
