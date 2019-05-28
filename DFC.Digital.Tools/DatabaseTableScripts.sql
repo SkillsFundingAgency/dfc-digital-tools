@@ -1,6 +1,4 @@
-﻿USE [DFC-UserAccounts]
-GO
-/****** Object:  Table [dbo].[Accounts]    Script Date: 08/05/2019 10:52:37 ******/
+﻿/****** Object:  Table [dbo].[Accounts]    Script Date: 08/05/2019 10:52:37 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -58,3 +56,7 @@ CREATE TABLE [dbo].[CircuitBreaker](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
+
+CREATE INDEX idx_audit_email ON [Audit] ([Email]);
+GO
+
