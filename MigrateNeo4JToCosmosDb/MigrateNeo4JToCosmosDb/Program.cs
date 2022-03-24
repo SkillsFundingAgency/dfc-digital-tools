@@ -4,28 +4,32 @@ using Microsoft.Azure.Cosmos;
 using Neo4j.Driver;
 using Newtonsoft.Json.Linq;
 
-Console.WriteLine("Neo4j Endpoint: Please enter the neo4j endpoint (e.g. bolt://HOSTNAME:7687)");
+Console.WriteLine("Neo4j Endpoint: Please enter the Neo4j endpoint (e.g. bolt://HOSTNAME:7687)");
 var neo4JEndpoint = Console.ReadLine()!.Trim();
 
-Console.WriteLine("Neo4j DB Name: Please enter the neo4j db name (e.g. published)");
+Console.WriteLine("Neo4j DB Name: Please enter the Neo4j db name (e.g. published)");
 var neo4JDbName = Console.ReadLine()!.Trim();
 
-Console.WriteLine("Neo4j DB Name: Please enter the neo4j username");
+Console.WriteLine("Neo4j Username: Please enter the Neo4j username");
 var neo4JUsername = Console.ReadLine()!.Trim();
 
-Console.WriteLine("Neo4j DB Name: Please enter the neo4j password");
+Console.WriteLine("Neo4j Password: Please enter the Neo4j password");
 var neo4JPassword = Console.ReadLine()!.Trim();
 
-Console.WriteLine("Cosmos DB Connection string: Please enter the Cosmos db connection string (e.g. AccountEndpoint=https://HOSTNAME:443/;AccountKey=KEY;)");
+Console.WriteLine("Cosmos Db Connection string: Please enter the Cosmos db connection string (e.g. AccountEndpoint=https://HOSTNAME:443/;AccountKey=KEY;)");
 var cosmosConnectionString = Console.ReadLine()!.Trim();
 
-Console.WriteLine("Cosmos DB Database name: Please enter the Cosmos db connection string (e.g. dev)");
+Console.WriteLine("Cosmos Db Database name: Please enter the Cosmos Db database name (e.g. dev)");
 var cosmosDbDatabaseName = Console.ReadLine()!.Trim();
 
-Console.WriteLine("Cosmos DB Container name: Please enter the Cosmos db container name to write to  (e.g. published)");
+Console.WriteLine("Cosmos Db Container name: Please enter the Cosmos Db container name to write to (e.g. published)");
 var cosmosDbContainerName = Console.ReadLine()!.Trim();
 
-Console.WriteLine("Please review summary below");
+Console.WriteLine("Amount of parallelisation: The amount of saves can do at once (higher the better - but balance needed not to saturate). If container is 400RUs try 15, if 1000RUs try 35");
+var parallelisationAmountStr = Console.ReadLine()!.Trim();
+var parallelisationAmount = string.IsNullOrEmpty(parallelisationAmountStr) ? 15 : int.Parse(parallelisationAmountStr);
+
+Console.WriteLine("Please review the entered information in the summary below.");
 Console.WriteLine();
 
 Console.WriteLine($"Neo4j endpoint - {neo4JEndpoint}");
@@ -33,22 +37,23 @@ Console.WriteLine($"Neo4j dbname - {neo4JDbName}");
 Console.WriteLine($"Neo4j username - {neo4JUsername}");
 Console.WriteLine($"Neo4j password - {neo4JPassword}");
 Console.WriteLine($"Cosmos Db connection string - {cosmosConnectionString}");
-Console.WriteLine($"Cosmos Db db name - {cosmosDbDatabaseName}");
+Console.WriteLine($"Cosmos Db database name - {cosmosDbDatabaseName}");
 Console.WriteLine($"Cosmos Db container name - {cosmosDbContainerName}");
+Console.WriteLine($"Amount of parallelisation - {parallelisationAmount}");
 
 Console.WriteLine();
 Console.WriteLine("Press Y to proceed - or any other key to quite");
 
 var y = Console.ReadKey().KeyChar.ToString();
-if (!y!.Equals("y", StringComparison.InvariantCultureIgnoreCase))
+Console.WriteLine();
+
+if (!y.Equals("y", StringComparison.InvariantCultureIgnoreCase))
 {
-    Console.WriteLine();
-    Console.WriteLine("Y not hit - quitting");
+    Console.WriteLine("'Y' not hit - quitting");
     return;
 }
 
 var cosmosDb = new CosmosClient(cosmosConnectionString);
-Console.WriteLine("About to request all the labels");
 
 var exclusions = new List<string>
 {
@@ -71,241 +76,234 @@ var exclusions = new List<string>
     "DynamicTitlePrefix"
 };
 
+Console.WriteLine("Request content type (label) information.");
+
 var contentTypes = (await RunQuery(new Query("call db.labels()"), neo4JDbName, true))
     .Select(label => label.Values.Values.First().As<string>())
     .Where(label => !exclusions.Contains(label))
     .ToList();
 
-Console.WriteLine($"{contentTypes.Count} labels received (after filtering). Looping through labels now to fetch data.");
-var count = 1;
-var total = contentTypes.Count;
+Console.WriteLine($"{contentTypes.Count} labels (content types) received, after filtering. Looping through content types now to fetch data.");
+var contentTypeCount = 1;
+var contentTypeTotal = contentTypes.Count;
 
 foreach (var contentType in contentTypes)
 {
-    await SaveDocumentsWithoutRelationships(contentType);
-    await AddContHasLinks(contentType);
-    await AddIncomingLinks(contentType);
+    Console.WriteLine($"Requesting document data from {contentType}. Content type {contentTypeCount} of {contentTypeTotal}...");
+    var documents = await RunQuery(new Query($"match (a:{contentType}) return a"), neo4JUsername, true);
+    Console.WriteLine($"{documents.Count} records found for {contentType} - Content type {contentTypeCount} of {contentTypeTotal}.");
+    
+    Console.WriteLine($"Requesting contHas relationship records for {contentType} - Content type {contentTypeCount} of {contentTypeTotal}...");
+    var contHasRelationships = await RunQuery(new Query($"match (a:{contentType})-[r]->(b) return a.uri, r, b.uri"), neo4JUsername, true);
+    Console.WriteLine($"{contHasRelationships.Count} contHas relationship records found for {contentType} - Content type {contentTypeCount} of {contentTypeTotal}.");
+    
+    Console.WriteLine($"Requesting incoming relationship records for {contentType} - Content type {contentTypeCount} of {contentTypeTotal}...");
+    var incomingRelationships = await RunQuery(new Query($"match (a:{contentType})<-[r]-(b) return a.uri, b.uri"), neo4JUsername, true);
+    Console.WriteLine($"{incomingRelationships.Count} incoming relationship records found for {contentType} - Content type {contentTypeCount} of {contentTypeTotal}.");
 
-    count++;
+    var documentCount = 1;
+    var documentTotal = documents.Count;
+
+    var documentGroups = documents.Chunk(parallelisationAmount);
+
+    foreach (var documentGroup in documentGroups)
+    {
+        var tasks = new List<Task>();
+        
+        foreach (var document in documentGroup)
+        {
+            var documentNode = document.Values["a"] as INode;
+            var documentUri = documentNode!.Properties["uri"].As<string>();
+
+            var relevantIncomingData = incomingRelationships
+                .Where(relationship => (string) relationship.Values["a.uri"] == documentUri).ToList();
+            var relevantContHasData = contHasRelationships
+                .Where(relationship => (string) relationship.Values["a.uri"] == documentUri).ToList();
+
+            tasks.Add(ProcessAndSaveDocument(documentNode, documentUri, relevantIncomingData, relevantContHasData,
+                contentType, documentCount++, documentTotal));
+        }
+
+        await Task.WhenAll(tasks);
+    }
+
+    contentTypeCount++;
 }
 
 Console.WriteLine("Finished processing.");
 
-IDriver GetNeo4JDriver()
+async Task ProcessAndSaveDocument(
+    INode documentNode,
+    string documentUri,
+    List<IRecord> incomingData,
+    List<IRecord> contHasData,
+    string contentType,
+    int documentCount,
+    int documentTotal)
 {
-    return GraphDatabase.Driver(neo4JEndpoint,AuthTokens.Basic(neo4JUsername, neo4JPassword));
-}
-
-async Task AddIncomingLinks(string contentType)
-{
-    var upwardsRelationshipData = await RunQuery(new Query($"match (a:{contentType})<-[r]-(b) return a.uri, b.uri"), neo4JUsername, true);
-    Console.WriteLine($"{upwardsRelationshipData.Count} upward relationship records found for {contentType} - overall {count}c of {total}.");
-    var innerCount = 1;
-
-    var grouped = upwardsRelationshipData.GroupBy(x => (string) x.Values["a.uri"]).ToList();
-    
-    foreach (var relationshipDataRows in grouped)
+    var (_, id, cont) = GetContentTypeAndId(documentUri);
+    var curies = new List<Dictionary<string, object>>
     {
-        var leftUri = relationshipDataRows.Key;
-        var (_, id, _) = GetContentTypeAndId(leftUri);
-        
-        Console.WriteLine($"Fetching document for {contentType} ({innerCount} of {grouped.Count}) - overall {count}c of {total}.");
-        var document = await GetFromCosmosDb(id, contentType.ToLower());
-        
-        var links = (document["_links"] as JObject)!.ToObject<Dictionary<string, object>>();
-        var curies = (links?["curies"] as JArray)!.ToObject<List<Dictionary<string, object>>>();
-        var incomingPosition = curies!.FindIndex(curie =>
-            (string)curie["name"] == "incoming");
-                
-        var incomingObject = curies.Count > incomingPosition ? curies[incomingPosition] : null;
-
-        if (incomingObject == null)
+        new()
         {
-            throw new MissingFieldException("Incoming property missing");
-        }
-                
-        var incomingList = (incomingObject["items"] as JArray)!.ToObject<List<Dictionary<string, object>>>();
-
-        foreach (var relationshipDataRow in relationshipDataRows)
+            {"name", "cont"},
+            {"href", cont}
+        },
+        new()
         {
-            var rightUri = (string) relationshipDataRow.Values["b.uri"];
-            var (rightContentType, rightId, _) = GetContentTypeAndId(rightUri);
-
-            if (incomingList.Any(incomingItem =>
-                (string)incomingItem["contentType"] == rightContentType && (string) incomingItem["id"] == rightId.ToString()))
-            {
-                Console.WriteLine(
-                    $"Link already exists for {contentType} ({innerCount} of {grouped.Count}) - overall {count}c of {total}.");
-
-                innerCount++;
-                continue;
-            }
-
-            incomingList.Add(new Dictionary<string, object>
-            {
-                {"contentType", rightContentType.ToLower()},
-                {"id", rightId.ToString()}
-            });
+            {"name", "incoming"},
+            {"items", new List<Dictionary<string, object>>()}
         }
+    };
 
-        incomingObject["items"] = incomingList;
-        curies[incomingPosition] = incomingObject;
-        links["curies"] = curies;
-        document["_links"] = links;
-        
-        Console.WriteLine($"Saving incoming relationship(s) for {contentType} ({innerCount} of {grouped.Count}) - overall {count}c of {total}.");
-        await SaveToCosmosDb(document);
-        
-        innerCount++;
+    var links = new Dictionary<string, object>
+    {
+        {"self", documentUri},
+        {"curies", curies}
+    };
+
+    var document = new Dictionary<string, object>(documentNode.Properties)
+    {
+        {"id", id.ToString()},
+        {"ContentType", contentType.ToLower()},
+        {"_links", links}
+    };
+
+    if (document.ContainsKey("ModifiedDate") && document["ModifiedDate"] is ZonedDateTime modifiedDate)
+    {
+        document["ModifiedDate"] = modifiedDate.ToDateTimeOffset().UtcDateTime.ToString("o");
     }
+
+    if (document.ContainsKey("CreatedDate") && document["CreatedDate"] is ZonedDateTime createdDate)
+    {
+        document["CreatedDate"] = createdDate.ToDateTimeOffset().UtcDateTime.ToString("o");
+    }
+    
+    AddContHasRelationships(document, links, contHasData);
+    AddIncomingRelationships(document, links, incomingData);
+    
+    Console.WriteLine($"Saving record {id} for {contentType} ({documentCount} of {documentTotal}) - content type {contentTypeCount} of {contentTypeTotal}.");
+    await SaveToCosmosDb(document);
 }
 
-async Task AddContHasLinks(string contentType)
+void AddContHasRelationships(
+    Dictionary<string, object> document,
+    Dictionary<string, object> linksSection,
+    List<IRecord> contHasData)
 {
-    var downwardsRelationshipData = await RunQuery(new Query($"match (a:{contentType})-[r]->(b) return a.uri, r, b.uri"), neo4JUsername, true);
-    Console.WriteLine($"{downwardsRelationshipData.Count} downward relationship records found for {contentType} - overall {count}b of {total}.");
-    var innerCount = 1;
-
-    var grouped = downwardsRelationshipData.GroupBy(x => (string) x.Values["a.uri"]).ToList();
-
-    foreach (var relationshipDataRows in grouped)
+    foreach (var contHasDataRow in contHasData)
     {
-        var leftUri = relationshipDataRows.Key;
-        var (_, id, _) = GetContentTypeAndId(leftUri);
-
-        Console.WriteLine($"Fetching document for {contentType} {id} ({innerCount} of {grouped.Count}) - overall {count}b of {total}.");
-        var document = await GetFromCosmosDb(id, contentType.ToLower());
-        var links = (document["_links"] as JObject)!.ToObject<Dictionary<string, object>>();
-
-        foreach (var relationshipDataRow in relationshipDataRows)
+        var relationshipUri = (string) contHasDataRow.Values["b.uri"];
+        var (contentType, _, contUrl) = GetContentTypeAndId(relationshipUri);
+        var href = relationshipUri.Replace(contUrl, string.Empty);
+        
+        var dataToAdd = new Dictionary<string, object>
         {
-            var rightUri = (string) relationshipDataRow.Values["b.uri"];
-            var (rightContentType, _, contUrl) = GetContentTypeAndId(rightUri);
-            var path = rightUri.Replace(contUrl, string.Empty);
-            
-            var toAdd = new Dictionary<string, object>
-            {
-                { "href", path },
-                { "contentType", rightContentType }
-            };
+            { "href", href },
+            { "contentType", contentType }
+        };
 
-            var relationshipContentType = (relationshipDataRow.Values["r"] as IRelationship)!.Type;
-            var key = $"cont:{relationshipContentType}";
-            
-            if (links.ContainsKey(key))
-            {
-                var contHas = links[key];
+        var relationshipName = (contHasDataRow.Values["r"] as IRelationship)!.Type;
+        var contHasKey = $"cont:{relationshipName}";
 
-                switch (contHas)
+        if (!linksSection.ContainsKey(contHasKey))
+        {
+            linksSection.Add(contHasKey, dataToAdd);
+        }
+        else
+        {
+            var contHasSection = linksSection[contHasKey];
+
+            switch (contHasSection)
+            {
+                case JObject existingDataWrapper:
                 {
-                    case JObject jo:
+                    var existingData = existingDataWrapper.ToObject<Dictionary<string, object>>();
+                    var newList = new List<Dictionary<string, object>>
                     {
-                        var djo = jo.ToObject<Dictionary<string, object>>();
-                        var l = new List<Dictionary<string, object>>
-                        {
-                            djo,
-                            toAdd
-                        };
+                        existingData,
+                        dataToAdd
+                    };
 
-                        links[key] = l;
-                        break;
-                    }
-                    case Dictionary<string, object> djo:
-                    {
-                        var l = new List<Dictionary<string, object>>
-                        {
-                            djo,
-                            toAdd
-                        };
-
-                        links[key] = l;
-                        break;
-                    }
-                    case JArray jaa:
-                    {
-                        var ja = jaa.ToObject<List<Dictionary<string, Object>>>();
-                        ja.Add(toAdd);
-
-                        links[key] = ja;
-                        break;
-                    }
-                    case List<Dictionary<string, Object>> ja:
-                        ja.Add(toAdd);
-                        links[key] = ja;
-                        break;
-                    default:
-                        throw new Exception($"Didn't expect type {contHas.GetType().Name}");
+                    linksSection[contHasKey] = newList;
+                    break;
                 }
-            }
-            else
-            {
-                links.Add(key, toAdd);
+                case Dictionary<string, object> existingData:
+                {
+                    var newList = new List<Dictionary<string, object>>
+                    {
+                        existingData,
+                        dataToAdd
+                    };
+
+                    linksSection[contHasKey] = newList;
+                    break;
+                }
+                case JArray existingArrayWrapper:
+                {
+                    var existingArray = existingArrayWrapper.ToObject<List<Dictionary<string, Object>>>();
+                    existingArray.Add(dataToAdd);
+
+                    linksSection[contHasKey] = existingArray;
+                    break;
+                }
+                case List<Dictionary<string, object>> existingList:
+                {
+                    existingList.Add(dataToAdd);
+
+                    linksSection[contHasKey] = existingList;
+                    break;
+                }
+                default:
+                    throw new Exception($"Didn't expect type {contHasSection.GetType().Name}");
             }
         }
-
-        document["_links"] = links;
-        
-        Console.WriteLine($"Saving cont:has relationship(s) ({relationshipDataRows.Key}) for {contentType} {id} ({innerCount} of {grouped.Count}) - overall {count}b of {total}.");
-        await SaveToCosmosDb(document);
-        
-        innerCount++;
     }
+
+    document["_links"] = linksSection;
 }
 
-async Task SaveDocumentsWithoutRelationships(string contentType)
+void AddIncomingRelationships(
+    Dictionary<string, object> document,
+    Dictionary<string, object> linksSection,
+    List<IRecord> incomingData)
 {
-    Console.WriteLine($"Requesting node data from {contentType}. Overal {count}a of {total}");
-    
-    var dataForLabel = await RunQuery(new Query($"match (a:{contentType}) return a"), neo4JUsername, true);
-    Console.WriteLine($"{dataForLabel.Count} records found for {contentType} - overall {count}a of {total}.");
-    var innerCount = 1;
-    
-    foreach (var dataRow in dataForLabel)
-    {
-        var node = dataRow.Values["a"] as INode;
-        var uri = node!.Properties["uri"].As<string>();
-        
-        var (_, id, cont) = GetContentTypeAndId(uri);
-        var curies = new List<Dictionary<string, object>>
-        {
-            new()
-            {
-                { "name", "cont" },
-                { "href", cont }
-            },
-            new()
-            {
-                { "name", "incoming" },
-                { "items", new List<Dictionary<string, object>>() }
-            }
-        };
-        
-        var links = new Dictionary<string, object>
-        {
-            { "self", uri },
-            { "curies", curies }
-        };
-        
-        var properties = new Dictionary<string, object>(node.Properties)
-        {
-            {"id", id.ToString()},
-            {"ContentType", contentType.ToLower() },
-            {"_links", links}
-        };
+    var curiesSection = SafeCastToList(linksSection["curies"]);
+    var incomingPosition = curiesSection.FindIndex(curie =>
+        (string)curie["name"] == "incoming");
+            
+    var incomingObject = curiesSection.Count > incomingPosition ? curiesSection[incomingPosition] : null;
 
-        if (properties.ContainsKey("ModifiedDate") && properties["ModifiedDate"] is ZonedDateTime modifiedDate)
-        {
-            properties["ModifiedDate"] = modifiedDate.ToDateTimeOffset().UtcDateTime.ToString("o");
-        }
-        
-        if (properties.ContainsKey("CreatedDate") && properties["CreatedDate"] is ZonedDateTime createdDate)
-        {
-            properties["CreatedDate"] = createdDate.ToDateTimeOffset().UtcDateTime.ToString("o");
-        }
-        
-        Console.WriteLine($"Saving record {id} for {contentType} ({innerCount++} of {dataForLabel.Count}) - overall {count}a of {total}.");
-        await SaveToCosmosDb(properties);
+    if (incomingObject == null)
+    {
+        throw new MissingFieldException("Incoming property missing");
     }
+
+    var incomingList = SafeCastToList(incomingObject["items"]);
+
+    foreach (var incomingDataRow in incomingData)
+    {
+        var uri = (string) incomingDataRow.Values["b.uri"];
+        var (contentType, id, _) = GetContentTypeAndId(uri);
+
+        if (incomingList.Any(incomingItem =>
+                (string)incomingItem["contentType"] == contentType && (string) incomingItem["id"] == id.ToString()))
+        {
+            Console.WriteLine($"Link already exists for {contentType}.");
+            continue;
+        }
+
+        incomingList.Add(new Dictionary<string, object>
+        {
+            {"contentType", contentType.ToLower()},
+            {"id", id.ToString()}
+        });
+    }
+
+    incomingObject["items"] = incomingList;
+    curiesSection[incomingPosition] = incomingObject;
+    linksSection["curies"] = curiesSection;
+    document["_links"] = linksSection;
 }
 
 static (string ContentType, Guid Id, string Cont) GetContentTypeAndId(string uri)
@@ -327,26 +325,6 @@ static (string ContentType, Guid Id, string Cont) GetContentTypeAndId(string uri
         Console.WriteLine(ex.Message);
         throw;
     }
-}
-
-async Task<Dictionary<string, object>> GetFromCosmosDb(Guid id, string contentType)
-{
-    var container = GetContainer();
-    var tries = 0;
-
-    while (tries++ < 5)
-    {
-        try
-        {
-            return await container.ReadItemAsync<Dictionary<string, object>>(id.ToString(), new PartitionKey(contentType));
-        }
-        catch
-        {
-            await Task.Delay(5000);
-        }
-    }
-
-    throw new Exception("Failed to get after 5 retries");
 }
 
 async Task SaveToCosmosDb(Dictionary<string, object> properties)
@@ -396,4 +374,19 @@ IAsyncSession GetAsyncSession(string database, bool defaultDatabase)
 {
     return defaultDatabase ? GetNeo4JDriver().AsyncSession()
         : GetNeo4JDriver().AsyncSession(builder => builder.WithDatabase(database));
+}
+
+IDriver GetNeo4JDriver()
+{
+    return GraphDatabase.Driver(neo4JEndpoint,AuthTokens.Basic(neo4JUsername, neo4JPassword));
+}
+
+List<Dictionary<string, object>> SafeCastToList(object value)
+{
+    if (value is JArray valAry)
+    {
+        return valAry.ToObject<List<Dictionary<string, object>>>();
+    }
+
+    return (List<Dictionary<string, object>>)value;
 }
